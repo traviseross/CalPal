@@ -76,3 +76,6 @@ archives/
 *.ics
 *schedule*.json
 *calendar*.json
+
+# Development requirements (full environment freeze)
+requirements-dev.txt
