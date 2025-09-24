@@ -1,9 +1,21 @@
-google-auth==2.29.0
-google-auth-oauthlib==1.2.0
+# Core Google Calendar API
+google-api-python-client==2.182.0
+google-auth==2.40.3
 google-auth-httplib2==0.2.0
-google-api-python-client==2.137.0
-icalendar==5.0.13
-flask==3.0.3
-requests==2.31.0
-python-dateutil==2.9.0.post0
-pytz==2024.1
+google-auth-oauthlib==1.2.2
+
+# ICS Calendar generation
+icalendar==6.3.1
+
+# Web server
+Flask==3.0.3
+Werkzeug==3.0.6
+
+# HTTP requests
+requests==2.32.4
+
+# Timezone handling
+pytz==2025.2
+
+# Additional dependencies (auto-installed by above packages)
+requests-oauthlib==2.0.0
