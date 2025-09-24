@@ -1,0 +1,78 @@
+# Virtual Environment
+bin/
+lib/
+lib64/
+share/
+pyvenv.cfg
+include/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment Variables
+.env
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Distribution
+build/
+dist/
+*.egg-info/
+
+# Configuration files (contains sensitive data)
+config.py
+
+# Generated files
+*.ics
+*_metadata.json
+metadata/
+
+# API keys and credentials
+credentials.json
+token.json
+*_credentials.json
+*_token.json
+25live_credentials
+service-account-key.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Personal/Sensitive Data Directories
+private/
+data/
+logs/
+
+# Archive files (development/debug files)
+archives/
+
+# Personal calendar data
+*.ics
+*schedule*.json
+*calendar*.json
