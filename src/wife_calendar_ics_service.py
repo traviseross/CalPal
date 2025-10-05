@@ -45,8 +45,9 @@ class WifeCalendarICSService:
         # Initialize Google Calendar service
         self.calendar_service = self._initialize_calendar_service()
 
-        # Source calendar from config
-        self.source_calendar = WORK_CALENDAR_ID
+        # Source calendars from config
+        self.work_calendar = WORK_CALENDAR_ID
+        self.personal_calendar = PERSONAL_CALENDAR_ID
 
         # Output configuration
         self.ics_output_path = ICS_FILE_PATH
@@ -66,67 +67,58 @@ class WifeCalendarICSService:
             raise
 
 
-    def fetch_work_calendar_events(self, days_back: int = 7, days_forward: int = 365):
-        """Fetch events from Travis's work calendar."""
+    def fetch_calendar_events(self, days_back: int = 7, days_forward: int = 365):
+        """Fetch events from both work and personal calendars."""
         try:
-            self.logger.info(f"Determining actual event range from {self.source_calendar}...")
+            self.logger.info(f"Fetching events from work calendar: {self.work_calendar}")
+            self.logger.info(f"Fetching events from personal calendar: {self.personal_calendar}...")
 
-            # Step 1: Find the actual range of events in the calendar
-            # Start with a very large future date to find the latest event
-            far_future = (datetime.now() + timedelta(days=365*5)).isoformat() + 'Z'
-
-            # Get a small sample to find the latest event
-            latest_events = self.calendar_service.events().list(
-                calendarId=self.source_calendar,
-                timeMin=(datetime.now() - timedelta(days=days_back)).isoformat() + 'Z',
-                timeMax=far_future,
-                maxResults=2500,
-                singleEvents=True,
-                orderBy='startTime'
-            ).execute()
-
-            events_sample = latest_events.get('items', [])
-
-            if not events_sample:
-                self.logger.warning("No events found in calendar")
-                return []
-
-            # Find the actual time range from the events
+            # Step 1: Calculate time range - always use exactly 12 months forward
             time_min = (datetime.now() - timedelta(days=days_back)).isoformat() + 'Z'
+            time_max = (datetime.now() + timedelta(days=365)).isoformat() + 'Z'
 
-            # Find the latest event date
-            latest_event_time = None
-            for event in events_sample:
-                event_time_data = event.get('end') or event.get('start')
-                if event_time_data:
-                    if 'dateTime' in event_time_data:
-                        event_time = datetime.fromisoformat(event_time_data['dateTime'].replace('Z', '+00:00'))
-                    else:
-                        # Convert date-only events to timezone-aware datetime at start of day
-                        event_date = datetime.strptime(event_time_data['date'], '%Y-%m-%d')
-                        event_time = event_date.replace(tzinfo=pytz.UTC)
+            self.logger.info(f"Fetching events from {time_min} to {time_max} (12 months forward)")
 
-                    if latest_event_time is None or event_time > latest_event_time:
-                        latest_event_time = event_time
+            # Step 2: Fetch events from both calendars
 
-            if latest_event_time:
-                # Use the actual latest event time, but ensure we go at least as far as the original days_forward
-                min_future_date = datetime.now(pytz.UTC) + timedelta(days=days_forward)
-                time_max = max(latest_event_time, min_future_date).astimezone(pytz.UTC).strftime('%Y-%m-%dT%H:%M:%SZ')
-                self.logger.info(f"Found events extending to {latest_event_time.strftime('%Y-%m-%d')}")
-            else:
-                time_max = (datetime.now() + timedelta(days=days_forward)).isoformat() + 'Z'
-                self.logger.info(f"Using default time range (no events found to determine range)")
-
-            self.logger.info(f"Fetching all events from {time_min} to {time_max}")
-
-            # Step 2: Fetch all events in the determined range
             all_events = []
+
+            # Fetch from work calendar
+            work_events = self._fetch_events_from_calendar(self.work_calendar, time_min, time_max, "work")
+            all_events.extend(work_events)
+
+            # Fetch from personal calendar
+            personal_events = self._fetch_events_from_calendar(self.personal_calendar, time_min, time_max, "personal")
+            all_events.extend(personal_events)
+
+            # Remove duplicates by event ID
+            seen_ids = set()
+            unique_events = []
+            for event in all_events:
+                event_id = event.get('id')
+                if event_id and event_id not in seen_ids:
+                    seen_ids.add(event_id)
+                    unique_events.append(event)
+                elif not event_id:
+                    # Keep events without IDs
+                    unique_events.append(event)
+
+            self.logger.info(f"Retrieved {len(unique_events)} total unique events from both calendars")
+            return unique_events
+
+        except Exception as e:
+            self.logger.error(f"Failed to fetch events: {e}")
+            return []
+
+    def _fetch_events_from_calendar(self, calendar_id: str, time_min: str, time_max: str, calendar_type: str) -> List[Dict]:
+        """Fetch events from a specific calendar."""
+        try:
+            events = []
             page_token = None
 
             while True:
                 events_result = self.calendar_service.events().list(
-                    calendarId=self.source_calendar,
+                    calendarId=calendar_id,
                     timeMin=time_min,
                     timeMax=time_max,
                     maxResults=2500,
@@ -136,122 +128,33 @@ class WifeCalendarICSService:
                 ).execute()
 
                 batch_events = events_result.get('items', [])
-                all_events.extend(batch_events)
+                events.extend(batch_events)
 
                 page_token = events_result.get('nextPageToken')
                 if not page_token:
                     break
 
-                self.logger.info(f"Retrieved {len(batch_events)} events, continuing...")
+                self.logger.info(f"Retrieved {len(batch_events)} events from {calendar_type} calendar, continuing...")
 
-            self.logger.info(f"Retrieved {len(all_events)} total events from work calendar")
-            return all_events
+            self.logger.info(f"Retrieved {len(events)} total events from {calendar_type} calendar ({calendar_id})")
+            return events
 
         except Exception as e:
-            self.logger.error(f"Failed to fetch events: {e}")
+            self.logger.error(f"Failed to fetch events from {calendar_type} calendar ({calendar_id}): {e}")
             return []
 
     def process_event_for_wife(self, event: Dict) -> Optional[Dict]:
-        """Process a work calendar event according to wife calendar rules."""
-        summary = event.get('summary', '')
-        description = event.get('description', '')
-        location = event.get('location', '')
-
-        # Rule 0: Skip mirrored events from Ross Family or travis.e.ross@gmail.com
-        # Check for indications that this event was mirrored from these specific sources
-        if self._is_mirrored_from_excluded_source(event):
-            return None  # Skip these mirrored events
-
-        # Rule 1: Class events
-        if 'Class (mirrored from Classes calendar)' in description:
-            return {
-                'summary': 'In class',
-                'description': '',  # No details
-                'location': '',     # No location
-                'start': event.get('start'),
-                'end': event.get('end'),
-                'original_event': event
-            }
-
-        # Rule 2: GFU Events (University events)
-        if 'GFU Event (mirrored)' in description:
-            return {
-                'summary': 'Fox Event',
-                'description': '',  # No details
-                'location': location,  # Keep original location
-                'start': event.get('start'),
-                'end': event.get('end'),
-                'original_event': event
-            }
-
-        # Rule 3: Skip personal busy time and unavailable blocks
-        if ('Personal calendar busy time (safe to delete)' in summary or
-            'Travis is unavailable' in summary):
-            return None  # Skip entirely
-
-        # Rule 4: Everything else becomes "In a meeting"
+        """Process events to preserve full details without filtering."""
+        # Keep all event details exactly as they are
         return {
-            'summary': 'In a meeting',
-            'description': '',  # No details
-            'location': location,  # Keep original location
+            'summary': event.get('summary', ''),
+            'description': event.get('description', ''),
+            'location': event.get('location', ''),
             'start': event.get('start'),
             'end': event.get('end'),
             'original_event': event
         }
 
-    def _is_mirrored_from_excluded_source(self, event: Dict) -> bool:
-        """Check if event is mirrored from Ross Family or travis.e.ross@gmail.com calendars."""
-        summary = event.get('summary', '').lower()
-        description = event.get('description', '').lower()
-
-        # Check for creator information - events mirrored from personal calendars
-        # often retain the original creator's email
-        creator = event.get('creator', {})
-        creator_email = creator.get('email', '').lower()
-
-        # Check organizer as well
-        organizer = event.get('organizer', {})
-        organizer_email = organizer.get('email', '').lower()
-
-        # Patterns to identify excluded mirrored events:
-        excluded_patterns = [
-            # Direct email matches
-            'travis.e.ross@gmail.com',
-            # Ross Family calendar patterns (common naming patterns)
-            'ross family',
-            'rossfamily',
-            'family calendar',
-            # Busy indicators that are typically from personal calendars
-            'busy',
-        ]
-
-        # Check if this is a "Busy" event that's likely mirrored from personal calendar
-        # We want to exclude "Busy" events that come from personal calendars, but keep
-        # legitimate work "Busy" events
-        if summary.strip() == 'busy':
-            # If it's just "Busy" with no other details and from personal sources, skip it
-            if (creator_email in ['travis.e.ross@gmail.com'] or
-                organizer_email in ['travis.e.ross@gmail.com'] or
-                any(pattern in description for pattern in ['ross family', 'personal'])):
-                return True
-
-        # Check for any of the excluded patterns in various fields
-        for pattern in excluded_patterns:
-            if (pattern in summary or
-                pattern in description or
-                pattern in creator_email or
-                pattern in organizer_email):
-                # Additional check: if it's "busy" pattern, make sure it's from personal source
-                if pattern == 'busy':
-                    # Only exclude if it's clearly from a personal source
-                    if (creator_email in ['travis.e.ross@gmail.com'] or
-                        'ross family' in description or
-                        'personal' in description):
-                        return True
-                else:
-                    return True
-
-        return False
 
     def generate_ics_file(self, processed_events: List[Dict]) -> str:
         """Generate ICS file content from processed events."""
@@ -333,7 +236,8 @@ class WifeCalendarICSService:
             metadata = {
                 'generated_at': datetime.now().isoformat(),
                 'public_url': 'https://calpal.traviseross.com/zj9ETjqLo2EFWwwUtMORWgnI94ji_4Obbsanw5ld8EM/travis_schedule.ics',
-                'source_calendar': self.source_calendar,
+                'work_calendar': self.work_calendar,
+                'personal_calendar': self.personal_calendar,
                 'events_count': ics_content.count('BEGIN:VEVENT')
             }
 
@@ -351,19 +255,21 @@ class WifeCalendarICSService:
         """Run the complete ICS generation process."""
         self.logger.info("🔄 Starting wife calendar ICS generation...")
 
-        # Fetch events from work calendar
-        work_events = self.fetch_work_calendar_events(days_back, days_forward)
+        # Fetch events from both calendars
+        all_events = self.fetch_calendar_events(days_back, days_forward)
 
-        if not work_events:
-            self.logger.warning("No events found in work calendar")
+        if not all_events:
+            self.logger.warning("No events found in calendars")
             return
 
-        # Process events according to rules
-        processed_events, filtered_stats = self._process_events_with_stats(work_events)
+        # Process events to preserve full details
+        processed_events = []
+        for event in all_events:
+            processed = self.process_event_for_wife(event)
+            if processed:
+                processed_events.append(processed)
 
-        self.logger.info(f"Processed {len(processed_events)} events, skipped {filtered_stats['total_skipped']} total")
-        self.logger.info(f"  - Filtered {filtered_stats['mirrored_count']} mirrored events from personal calendars")
-        self.logger.info(f"  - Filtered {filtered_stats['personal_busy_count']} personal busy time blocks")
+        self.logger.info(f"Processed {len(processed_events)} events with full details preserved")
 
         # Generate ICS content
         ics_content = self.generate_ics_file(processed_events)
@@ -372,49 +278,18 @@ class WifeCalendarICSService:
         metadata = self.save_ics_file(ics_content)
 
         # Summary
-        print(f"\n📅 WIFE CALENDAR ICS GENERATION COMPLETE")
+        print(f"\n📅 CALENDAR ICS GENERATION COMPLETE")
         print(f"=" * 50)
-        print(f"Source calendar: {self.source_calendar}")
-        print(f"Events processed: {len(work_events)}")
+        print(f"Work calendar: {self.work_calendar}")
+        print(f"Personal calendar: {self.personal_calendar}")
+        print(f"Total events found: {len(all_events)}")
         print(f"Events included: {len(processed_events)}")
-        print(f"Events skipped: {filtered_stats['total_skipped']}")
-        print(f"  - Mirrored events filtered: {filtered_stats['mirrored_count']}")
-        print(f"  - Personal busy time filtered: {filtered_stats['personal_busy_count']}")
+        print(f"Date range: 12 months forward")
         print(f"ICS file: {self.ics_output_path}")
         print(f"Public URL: {metadata['public_url']}")
 
         return metadata
 
-    def _process_events_with_stats(self, work_events: List[Dict]) -> tuple:
-        """Process events and return both results and filtering statistics."""
-        processed_events = []
-        filtered_mirrored_count = 0
-        filtered_personal_busy_count = 0
-
-        for event in work_events:
-            # Check why the event is being skipped for better logging
-            summary = event.get('summary', '')
-            if self._is_mirrored_from_excluded_source(event):
-                self.logger.debug(f"Filtered mirrored event: {summary}")
-                filtered_mirrored_count += 1
-                continue
-            elif ('Personal calendar busy time (safe to delete)' in summary or
-                  'Travis is unavailable' in summary):
-                self.logger.debug(f"Filtered personal busy time: {summary}")
-                filtered_personal_busy_count += 1
-                continue
-
-            processed = self.process_event_for_wife(event)
-            if processed:
-                processed_events.append(processed)
-
-        stats = {
-            'mirrored_count': filtered_mirrored_count,
-            'personal_busy_count': filtered_personal_busy_count,
-            'total_skipped': filtered_mirrored_count + filtered_personal_busy_count
-        }
-
-        return processed_events, stats
 
 def main():
     """Main function."""

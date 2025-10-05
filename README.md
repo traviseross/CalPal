@@ -1,118 +1,186 @@
 # CalPal - 25Live Calendar Sync System
 
-A comprehensive calendar synchronization system that syncs events from CollegeNET 25Live to Google Calendar and generates clean ICS files for external calendar sharing.
+A comprehensive, database-backed calendar synchronization system that syncs events from CollegeNET 25Live to Google Calendar and generates clean ICS files for external calendar sharing.
 
-## 🎯 Purpose
+## Table of Contents
 
-CalPal automates the complex process of:
-- Syncing class schedules and university events from 25Live to Google Calendar
-- Creating clean, filtered ICS files for calendar sharing
-- Maintaining event tracking and duplicate prevention
-- Providing a secure web interface for calendar access
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [Configuration](#configuration)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
 
-## 🏗️ Architecture
+## Overview
+
+CalPal automates complex calendar management workflows for academic institutions using CollegeNET 25Live. It provides intelligent event synchronization, duplicate prevention, database-backed event tracking, and flexible ICS generation for calendar sharing.
+
+**Perfect for:**
+- Academic institutions using 25Live for course scheduling
+- Faculty/staff managing multiple calendar sources
+- Organizations needing automated calendar aggregation
+- Anyone requiring filtered calendar views for external sharing
+
+## Key Features
+
+### Database-Backed Event Tracking
+- **PostgreSQL Database**: Single source of truth for all calendar events
+- **Intelligent Sync**: Tracks event lifecycle (created, moved, deleted, updated)
+- **Bidirectional Detection**: Identifies changes in both Google Calendar and 25Live
+- **Audit Trail**: Complete history of all event operations
+
+### 25Live Integration
+- **Automated Class Sync**: Pull teaching schedules into Google Calendar
+- **Event Synchronization**: Sync campus/university events from 25Live queries
+- **Smart Duplicate Prevention**: Signature-based detection using 25Live reservation IDs
+- **API Limit Management**: Intelligent batching respects 25Live's date range constraints
+
+### Calendar Organization
+- **Automatic Event Sorting**: Routes events to appropriate subcalendars
+- **Booking Management**: Identifies and organizes appointment-type events
+- **Mirror Subcalendars**: Creates organized views across multiple calendars
+- **Attendee Event Handling**: Intelligently manages meeting invitations
+
+### ICS Generation
+- **Filtered Calendar Views**: Generate clean ICS files for external sharing
+- **Custom Event Formatting**: Transform event details for privacy/clarity
+- **Privacy Protection**: Exclude personal events from shared calendars
+- **Flexible Rules**: Configurable filtering and transformation logic
+
+### Web Interface
+- **Secure ICS Hosting**: Token-based authentication for calendar URLs
+- **Continuous Updates**: Auto-refreshes ICS files on schedule
+- **Flask Server**: Lightweight web server for calendar distribution
+
+## Architecture
+
+### System Components
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CalPal Architecture                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌──────────────┐      ┌──────────────┐                    │
+│  │   25Live     │      │    Google    │                     │
+│  │   Calendar   │◄────►│   Calendar   │                     │
+│  │     API      │      │     API      │                     │
+│  └──────────────┘      └──────────────┘                     │
+│         │                      │                             │
+│         └──────────┬───────────┘                            │
+│                    ▼                                         │
+│         ┌────────────────────┐                              │
+│         │  PostgreSQL DB     │◄─── Single Source of Truth   │
+│         │  Event Tracking    │                              │
+│         └────────────────────┘                              │
+│                    │                                         │
+│         ┌──────────┴──────────┐                             │
+│         ▼                     ▼                              │
+│  ┌──────────────┐      ┌──────────────┐                    │
+│  │ Event        │      │ ICS          │                     │
+│  │ Organizer    │      │ Generator    │                     │
+│  └──────────────┘      └──────────────┘                     │
+│         │                      │                             │
+│         └──────────┬───────────┘                            │
+│                    ▼                                         │
+│         ┌────────────────────┐                              │
+│         │  Flask Web Server  │                              │
+│         │  (ICS Hosting)     │                              │
+│         └────────────────────┘                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Directory Structure
 
 ```
 CalPal/
-├── src/                    # Core application modules
-│   ├── twentyfive_live_sync.py      # 25Live API sync service
-│   ├── wife_calendar_ics_service.py # ICS generation service
-│   ├── calpal_flask_server.py       # Web server for ICS hosting
-│   └── run_wife_calendar_service.py # Continuous sync daemon
-├── docs/                   # Documentation
-├── data/                   # System tracking files (git-ignored)
-├── private/               # Sensitive data (git-ignored)
-└── archives/              # Development files (git-ignored)
+├── src/                           # Core application modules
+│   ├── unified_db_calpal_service.py    # Main coordinating service
+│   ├── db_aware_25live_sync.py         # 25Live to database sync
+│   ├── calendar_scanner.py             # Google Calendar scanner
+│   ├── work_event_organizer.py         # Event organization logic
+│   ├── db_aware_wife_ics_generator.py  # Database-backed ICS generation
+│   ├── db_manager.py                   # Database operations
+│   └── calpal_flask_server.py          # Web server for ICS hosting
+├── docs/                          # Documentation
+│   ├── DATABASE.md                     # Database schema & operations
+│   ├── INSTALLATION.md                 # Setup instructions
+│   ├── CONFIGURATION.md                # Configuration guide
+│   └── SERVICES.md                     # Service documentation
+├── db/                            # Database files
+│   ├── init/                           # Schema initialization
+│   └── migrations/                     # Database migrations
+├── config.example.py              # Configuration template
+├── requirements.txt               # Python dependencies
+└── docker-compose.yml             # Database container setup
 ```
 
-## ✨ Features
-
-### 25Live Integration
-- **Classes Sync**: Automatically syncs teaching schedules to a dedicated Google Calendar
-- **University Events**: Syncs campus events from multiple 25Live queries
-- **Duplicate Prevention**: Advanced signature-based duplicate detection
-- **Date Range Management**: Respects 25Live's 20-week API limits with intelligent batching
-
-### ICS Generation
-- **Event Filtering**: Clean event categorization and filtering
-- **Custom Formatting**:
-  - Classes → "In class" (no location details)
-  - University Events → "Fox Event" (with location)
-  - Other Work Events → "In a meeting" (with location)
-- **Privacy Protection**: Filters out personal calendar events completely
-
-### Web Interface
-- **Secure Access**: Token-based authentication for ICS file access
-- **Auto-Generation**: Keeps ICS files updated automatically
-- **Public URLs**: Provides shareable calendar URLs
-
-## 📋 Event Processing Flow
-
-```
-25Live → Google Calendar → ICS Generation
-   ↓            ↓               ↓
-Classes      Classes         "In class"
-GFU Events → GFU Events  →   "Fox Event"
-              ↓               ↓
-           Work Calendar → "In a meeting"
-```
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Python 3.8+
-- Google Calendar API access
-- 25Live API credentials
-- George Fox University institutional access
+
+- **Python 3.8+**
+- **PostgreSQL 15+** (or use included Docker setup)
+- **Google Cloud Project** with Calendar API enabled
+- **25Live Account** with API access
+- **Docker & Docker Compose** (optional, for database)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/traviseross/CalPal.git
+   git clone https://github.com/yourusername/CalPal.git
    cd CalPal
    ```
 
-2. **Install dependencies**
+2. **Set up Python environment**
    ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
-3. **Configure credentials**
+3. **Configure CalPal**
    ```bash
    cp config.example.py config.py
-   # Edit config.py with your settings
+   # Edit config.py with your institution's settings
    ```
 
-4. **Set up Google API credentials**
-   - Place your service account key at `~/.config/calpal/service-account-key.json`
-   - Add 25Live credentials to `~/.config/calpal/25live_credentials`
+4. **Start the database**
+   ```bash
+   docker compose up -d
+   # Database will be available on localhost:5433
+   ```
 
-### Usage
+5. **Set up credentials**
+   ```bash
+   mkdir -p ~/.config/calpal
+   # Place service-account-key.json in ~/.config/calpal/
+   # Create 25live_credentials file with username and password
+   ```
 
-#### One-time Sync
-```bash
-python3 src/twentyfive_live_sync.py
-```
+6. **Run the unified service**
+   ```bash
+   python3 src/unified_db_calpal_service.py
+   ```
 
-#### Generate ICS File
-```bash
-python3 src/wife_calendar_ics_service.py
-```
+For detailed installation instructions, see [docs/INSTALLATION.md](docs/INSTALLATION.md).
 
-#### Run Web Server
-```bash
-python3 src/calpal_flask_server.py
-```
+## Documentation
 
-#### Continuous Sync Service
-```bash
-python3 src/run_wife_calendar_service.py --interval 15
-```
+- **[Installation Guide](docs/INSTALLATION.md)** - Complete setup instructions
+- **[Configuration Guide](docs/CONFIGURATION.md)** - All configuration options
+- **[Database Documentation](docs/DATABASE.md)** - Database schema and operations
+- **[Services Documentation](docs/SERVICES.md)** - Service components and APIs
+- **[Security Guide](docs/SECURITY.md)** - Security best practices
+- **[Contributing Guidelines](docs/CONTRIBUTING.md)** - How to contribute
 
-## ⚙️ Configuration
+## Configuration
 
-### Required Settings
+CalPal uses a centralized `config.py` file for all settings. Key configuration areas:
 
 ```python
 # Google Calendar API
@@ -120,105 +188,148 @@ GOOGLE_CREDENTIALS_FILE = '~/.config/calpal/service-account-key.json'
 WORK_CALENDAR_ID = 'your-work-calendar@example.edu'
 
 # 25Live API
-TWENTYFIVE_LIVE_CREDENTIALS_FILE = '~/.config/calpal/25live_credentials'
 TWENTYFIVE_LIVE_INSTITUTION = 'your-institution'
+TWENTYFIVE_LIVE_CREDENTIALS_FILE = '~/.config/calpal/25live_credentials'
+
+# Database
+DATABASE_URL = 'postgresql://user:password@localhost:5433/calpal_db'
 
 # Calendar Mappings
 CALENDAR_MAPPINGS = {
     'Classes': 'classes-calendar-id@group.calendar.google.com',
-    'GFU Events': 'events-calendar-id@group.calendar.google.com'
+    'Events': 'events-calendar-id@group.calendar.google.com'
 }
 ```
 
-### Security Configuration
+See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for complete configuration reference.
 
-```python
-# Secure endpoint access
-SECURE_ENDPOINT_PATH = 'your-secure-random-path'
-ACCESS_TOKEN = 'your-secure-access-token'
-```
+## Security
 
-## 🔒 Security Features
+CalPal implements multiple security layers:
 
 - **Credential Isolation**: All sensitive data stored outside repository
-- **Token Authentication**: Secure access to calendar endpoints
-- **Personal Data Filtering**: Removes personal calendar events from ICS output
-- **Gitignore Protection**: Sensitive directories completely excluded from version control
+- **Token Authentication**: Secure access to web endpoints
+- **Database Security**: Encrypted connections and credential management
+- **API Key Protection**: Service account keys never committed to git
+- **Environment Separation**: Development vs production configurations
 
-## 📅 Event Categories
+For detailed security information, see [docs/SECURITY.md](docs/SECURITY.md).
 
-| Source | Google Calendar | ICS Output | Location | Details |
-|--------|----------------|------------|----------|---------|
-| Classes | Classes Calendar | "In class" | Hidden | None |
-| 25Live Events | GFU Events Calendar | "Fox Event" | Shown | None |
-| Work Events | Work Calendar | "In a meeting" | Shown | None |
-| Personal Events | - | Filtered Out | - | - |
+## Use Cases
 
-## 🔧 Advanced Features
+### Academic Institutions
+- Sync course schedules from 25Live to faculty Google Calendars
+- Aggregate campus events for administrative staff
+- Generate filtered calendar feeds for students and parents
 
-### Deletion Detection
-- Automatically detects when events are removed from source calendars
-- Cleans up corresponding mirror events
-- Maintains deletion history for learning
+### Individual Faculty/Staff
+- Consolidate multiple calendar sources into one view
+- Automatically organize booking/appointment events
+- Share availability without exposing sensitive details
 
-### Date Range Optimization
-- Scans 12 months forward for comprehensive coverage
-- Intelligently batches requests to respect API limits
-- Automatically adjusts ranges based on actual event data
+### Departments
+- Track course offerings across departments
+- Monitor room bookings and space utilization
+- Coordinate campus events and activities
 
-### Event Tracking
-- JSON-based tracking system for event signatures
-- Duplicate prevention across calendar rebuilds
-- Comprehensive logging for debugging
+## Service Components
 
-## 🏫 George Fox University Integration
+CalPal operates as a unified service with multiple coordinated components:
 
-This system is specifically designed for George Fox University's:
-- 25Live calendar system
-- Institutional Google Workspace
-- Academic calendar requirements
-- Campus event management
+### Core Services
 
-## 📝 Development
+| Service | Purpose | Run Frequency |
+|---------|---------|---------------|
+| **25Live Sync** | Pull events from 25Live API into database | Every 30 minutes |
+| **Calendar Scanner** | Scan Google Calendars for changes/deletions | Every 15 minutes |
+| **Personal/Family Mirror** | Mirror personal/family events to subcalendars | Every 10 minutes |
+| **Work Event Organizer** | Sort and organize work calendar events | Every 5 minutes |
+| **Subcalendar Sync** | Ensure subcalendars mirrored to work calendar | Every 10 minutes |
+| **ICS Generator** | Generate filtered ICS files from database | Every 5 minutes |
 
-### File Structure
-- `src/twentyfive_live_sync.py` - Core sync engine with API integration
-- `src/wife_calendar_ics_service.py` - ICS generation with filtering rules
-- `src/calpal_flask_server.py` - Web server for secure calendar hosting
-- `src/run_wife_calendar_service.py` - Daemon for continuous operation
+All services use the PostgreSQL database as the single source of truth.
 
-### Testing
-Run individual components for testing:
+## Troubleshooting
+
+### Common Issues
+
+**Database Connection Failed**
 ```bash
-# Test 25Live connection
-python3 src/twentyfive_live_sync.py --test
+# Check database is running
+docker compose ps
+docker compose logs calpal_db
 
-# Generate test ICS
-python3 src/wife_calendar_ics_service.py --log-level DEBUG
-
-# Test web server
-python3 src/calpal_flask_server.py --debug
+# Restart database
+docker compose down && docker compose up -d
 ```
 
-## 🤝 Contributing
+**Google Calendar API Errors**
+```bash
+# Verify service account key exists
+ls -la ~/.config/calpal/service-account-key.json
 
+# Check calendar permissions in Google Admin Console
+```
+
+**25Live Authentication Errors**
+```bash
+# Verify credentials file format (two lines: username, password)
+cat ~/.config/calpal/25live_credentials
+```
+
+For more troubleshooting, see [docs/SERVICES.md](docs/SERVICES.md).
+
+## Contributing
+
+We welcome contributions! Please see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+
+**Quick Contribution Guide:**
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes with clear commit messages
+4. Add tests for new functionality
+5. Update documentation as needed
+6. Submit a pull request
 
-## 📄 License
+## FAQ
 
-This project is designed for George Fox University's internal calendar management needs.
+**Q: Can I use this without 25Live?**
+A: The 25Live integration is optional. You can use CalPal just for Google Calendar organization and ICS generation.
 
-## 📞 Support
+**Q: What happens if I manually delete a synced event?**
+A: CalPal's database tracking detects deletions. The event will be marked as deleted and won't be re-created unless it appears again in the source.
 
-For questions or issues:
-- Check the documentation in `docs/`
-- Review configuration examples
-- Ensure all credentials are properly configured
+**Q: Can I customize the ICS output format?**
+A: Yes! Edit the filtering rules in `src/db_aware_wife_ics_generator.py` to customize event transformations.
+
+**Q: How do I back up my CalPal database?**
+A: See [docs/DATABASE.md](docs/DATABASE.md#backup-and-restore) for backup procedures.
+
+**Q: Is this suitable for production use?**
+A: CalPal is production-ready. Ensure you follow the security guidelines in [docs/SECURITY.md](docs/SECURITY.md).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and release notes.
+
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+- Built with [Google Calendar API](https://developers.google.com/calendar)
+- Integrated with [CollegeNET 25Live](https://www.collegenet.com/products/series25/)
+- Database: [PostgreSQL](https://www.postgresql.org/)
+- Web framework: [Flask](https://flask.palletsprojects.com/)
+- Calendar generation: [iCalendar](https://github.com/collective/icalendar)
+
+## Support
+
+- **Documentation**: Full documentation in [`docs/`](docs/)
+- **Issues**: Report bugs via [GitHub Issues](https://github.com/yourusername/CalPal/issues)
+- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/yourusername/CalPal/discussions)
 
 ---
 
-*Built with Python, Google Calendar API, and Flask for reliable academic calendar management.*
+**Built with Python, PostgreSQL, and Google Calendar API for reliable academic calendar management.**

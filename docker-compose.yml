@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  calpal_db:
+    image: postgres:15-alpine
+    container_name: calpal_db
+    environment:
+      POSTGRES_USER: calpal
+      # For development: use default password
+      # For production: set POSTGRES_PASSWORD environment variable or use secrets
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-calpal_dev_password}
+      POSTGRES_DB: calpal_db
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+    ports:
+      # Bind to localhost only for security
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - calpal_db_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U calpal -d calpal_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  calpal_db_data:
+    name: calpal_db_data
