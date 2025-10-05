@@ -73,7 +73,7 @@ CalPal consists of multiple coordinated services that work together to sync, org
 | **Unified Service** | Coordinates all components | Config | Logs, metrics | Continuous |
 | **Database Manager** | Database operations | SQL queries | Query results | On-demand |
 | **25Live Sync** | Pull events from 25Live API | 25Live API | Database records | 30 minutes |
-| **Calendar Scanner** | Scan Google Calendars | Google API | Database records | 15 minutes |
+| **Calendar Scanner** | Scan Google Calendars, detect & remove deletions | Google API | Database records, deletions | 15 minutes |
 | **Work Organizer** | Sort/move work events | Database | Updated events | 5 minutes |
 | **Personal Mirror** | Mirror personal/family | Google API | Mirror events | 10 minutes |
 | **Subcalendar Sync** | Sync subcalendars to work | Database | Mirror events | 10 minutes |
@@ -347,20 +347,74 @@ Events synced from 25Live include:
 
 **File:** `src/calendar_scanner.py`
 
-Scans Google Calendars to detect changes and deletions.
+Scans Google Calendars to detect changes and deletions, and ensures deleted events are removed from Google Calendar.
 
 ### Features
 
 - **Multi-Calendar Scanning**: Scans all configured calendars
 - **Change Detection**: Identifies new, updated, and deleted events
 - **Last-Seen Tracking**: Updates `last_seen_at` for active events
-- **Deletion Detection**: Marks events deleted if not found
+- **Deletion Detection**: Automatically detects events removed from Google Calendar
+- **Deletion Execution**: Removes events marked as deleted from Google Calendar
 - **Attendee Event Handling**: Tracks RSVP status
+- **Bidirectional Sync**: Keeps database and Google Calendar in sync
+
+### Deletion Detection & Removal
+
+The Calendar Scanner implements comprehensive deletion handling in both directions:
+
+#### Detection Phase
+When scanning each calendar, the scanner:
+1. Fetches all current events from Google Calendar
+2. Compares event IDs against database records
+3. Identifies events in database but missing from calendar
+4. Marks missing events as deleted in database with `last_action = 'scanner_detected_deletion'`
+
+#### Removal Phase
+After scanning all calendars, the scanner:
+1. Queries database for events marked as deleted (`deleted_at IS NOT NULL`)
+2. Excludes events already removed (`last_action != 'removed_from_google'`)
+3. Deletes these events from Google Calendar via API
+4. Updates database with `last_action = 'removed_from_google'`
+5. Handles already-removed events gracefully (404/410 errors)
+
+This ensures:
+- Events deleted manually from Google Calendar are marked as deleted in database
+- Events marked as deleted in database (e.g., from blacklist) are removed from Google Calendar
+- No orphaned or stale events persist in either system
+
+**Example deletion flow:**
+```
+User deletes event from Google Calendar
+    ↓
+Calendar Scanner runs (every 15 min)
+    ↓
+Event missing from calendar → marked deleted in DB
+    ↓
+Scanner removal phase runs
+    ↓
+Event already gone from calendar (404) → marked 'already_removed'
+```
+
+**Example blacklist flow:**
+```
+Event added to blacklist
+    ↓
+Blacklist manager marks event deleted in DB
+    ↓
+Calendar Scanner runs (every 15 min)
+    ↓
+Scanner removal phase finds deleted events
+    ↓
+Events deleted from Google Calendar via API
+    ↓
+Database updated with 'removed_from_google'
+```
 
 ### Usage
 
 ```bash
-# Scan all calendars
+# Scan all calendars (includes deletion detection and removal)
 python3 src/calendar_scanner.py
 
 # Scan specific calendar
@@ -381,14 +435,17 @@ from src.calendar_scanner import CalendarScanner
 # Initialize
 scanner = CalendarScanner()
 
-# Scan all calendars
+# Scan all calendars (auto-detects deletions and removes from Google)
 results = scanner.scan_all_calendars()
 
 # Scan specific calendar
-results = scanner.scan_calendar('user@example.edu')
+results = scanner.scan_calendar('user@example.edu', 'Calendar Name')
 
-# Detect deletions
-deletions = scanner.detect_deletions('user@example.edu')
+# Manual deletion detection for specific calendar
+deleted_count = scanner._detect_deletions('user@example.edu', set())
+
+# Manual removal of deleted events from Google Calendar
+scanner._remove_deleted_events()
 ```
 
 ### Scan Results
@@ -399,11 +456,40 @@ deletions = scanner.detect_deletions('user@example.edu')
     'events_scanned': int,
     'events_new': int,
     'events_updated': int,
-    'events_deleted': int,
-    'scan_time': float,  # seconds
+    'events_deleted': int,      # Events detected as deleted from Google
+    'events_removed': int,       # Events removed from Google Calendar
+    'scan_time': float,          # seconds
     'errors': List[str]
 }
 ```
+
+### Database Event States
+
+Events tracked by the scanner go through these states:
+
+| State | `deleted_at` | `status` | `last_action` | Meaning |
+|-------|-------------|----------|---------------|---------|
+| Active | NULL | active | scanned | Event exists on calendar |
+| Detected Deleted | timestamp | deleted | scanner_detected_deletion | Missing from Google, marked in DB |
+| Removed | timestamp | deleted | removed_from_google | Deleted from Google by scanner |
+| Already Gone | timestamp | deleted | already_removed | Was already missing (404/410) |
+| Blacklisted | timestamp | deleted | blacklisted | Marked deleted by blacklist manager |
+
+### Error Handling
+
+The scanner gracefully handles:
+- **404 Not Found**: Event already deleted from calendar
+- **410 Gone**: Event permanently removed
+- **403 Forbidden**: Insufficient permissions (logged, not failed)
+- **500 Server Error**: Retried on next scan
+- **Network Errors**: Caught and logged, scan continues
+
+### Performance Considerations
+
+- **Batch Processing**: Processes up to 500 deletions per scan
+- **API Rate Limiting**: Respects Google Calendar API quotas
+- **Database Efficiency**: Uses indexed queries for deletion detection
+- **Concurrent Safety**: Uses database transactions for atomicity
 
 ## Work Event Organizer
 
@@ -675,13 +761,14 @@ END:VCALENDAR
 
 **File:** `src/calpal_flask_server.py`
 
-Web server for serving ICS files via HTTP with token authentication.
+Web server for serving ICS files via HTTP with token authentication and automatic refresh.
 
 ### Features
 
 - **Secure Endpoints**: Token-based authentication
 - **ICS Serving**: Delivers calendar files via HTTP
-- **Auto-Refresh**: Serves latest generated ICS
+- **No-Cache Headers**: Always serves latest ICS file from disk
+- **Auto-Restart**: ICS generator restarts Flask after updates
 - **CORS Support**: Allows cross-origin requests
 - **Health Checks**: Provides status endpoint
 
@@ -715,6 +802,18 @@ ACCESS_TOKEN = 'your-access-token'
 # ICS file
 ICS_FILE_PATH = 'private/calendar.ics'
 ```
+
+### Cache Control
+
+Flask is configured to **never cache** ICS files:
+- `Cache-Control: no-cache, no-store, must-revalidate`
+- `Pragma: no-cache`
+- `Expires: 0`
+- `etag: False`
+
+This ensures clients always receive the latest calendar data.
+
+Additionally, the ICS generator automatically restarts Flask after generating a new ICS file, ensuring the server always serves fresh content.
 
 ### Endpoints
 

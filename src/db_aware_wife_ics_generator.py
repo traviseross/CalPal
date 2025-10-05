@@ -212,11 +212,56 @@ class DBWifeICSGenerator:
             with open(metadata_path, 'w') as f:
                 json.dump(metadata, f, indent=2)
 
+            # Force Flask to reload by restarting it
+            self._restart_flask_server()
+
             return metadata
 
         except Exception as e:
             self.logger.error(f"Failed to save ICS file: {e}")
             raise
+
+    def _restart_flask_server(self):
+        """Restart Flask server to ensure it serves the updated ICS file."""
+        try:
+            import subprocess
+            import signal as sig
+
+            # Find Flask server process
+            result = subprocess.run(
+                ['pgrep', '-f', 'calpal_flask_server.py'],
+                capture_output=True,
+                text=True
+            )
+
+            if result.returncode == 0 and result.stdout.strip():
+                pid = int(result.stdout.strip().split()[0])
+                self.logger.info(f"🔄 Restarting Flask server (PID: {pid}) to serve updated ICS file...")
+
+                # Send SIGTERM to gracefully stop Flask
+                os.kill(pid, sig.SIGTERM)
+
+                # Wait a moment for it to stop
+                import time
+                time.sleep(1)
+
+                # Restart Flask in background
+                subprocess.Popen(
+                    ['nohup', 'python3', 'src/calpal_flask_server.py', '--port', '5001', '--host', '0.0.0.0'],
+                    cwd='/home/tradmin/CalPal',
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    start_new_session=True
+                )
+
+                self.logger.info("✅ Flask server restarted successfully")
+            else:
+                self.logger.warning("Flask server not found - skipping restart")
+
+        except Exception as e:
+            self.logger.warning(f"Could not restart Flask server: {e}")
+            # Don't fail the ICS generation if Flask restart fails
+            pass
 
     def run_generation(self, days_back: int = 7, days_forward: int = 365):
         """Run the complete ICS generation process."""

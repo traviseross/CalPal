@@ -275,16 +275,17 @@ class CalendarScanner:
             'events_found': 0,
             'events_recorded': 0,
             'events_updated': 0,
+            'events_deleted': 0,
             'events_skipped': 0,
             'errors': 0
         }
 
-        # Fetch all events
+        # Fetch all events from Google Calendar
         events = self.fetch_calendar_events(calendar_id, calendar_name)
         stats['events_found'] = len(events)
 
-        if not events:
-            return stats
+        # Build set of event IDs currently on calendar
+        calendar_event_ids = {event.get('id') for event in events if event.get('id')}
 
         # Process each event
         for event in events:
@@ -312,7 +313,69 @@ class CalendarScanner:
                 self.logger.error(f"Error processing event {event.get('id', 'unknown')}: {e}")
                 stats['errors'] += 1
 
+        # DELETION DETECTION: Find events in DB but not on calendar
+        stats['events_deleted'] = self._detect_deletions(calendar_id, calendar_event_ids)
+
         return stats
+
+    def _detect_deletions(self, calendar_id: str, calendar_event_ids: set) -> int:
+        """
+        Detect events that were deleted from Google Calendar.
+        Compares events in database vs events found on calendar.
+        """
+        try:
+            from sqlalchemy import text
+
+            # Get all active event IDs from database for this calendar
+            with self.db.get_session() as session:
+                db_events = session.execute(
+                    text("""
+                        SELECT event_id
+                        FROM calendar_events
+                        WHERE current_calendar = :calendar_id
+                        AND deleted_at IS NULL
+                        AND start_time >= :time_min
+                        AND start_time <= :time_max
+                    """),
+                    {
+                        'calendar_id': calendar_id,
+                        'time_min': self.start_date,
+                        'time_max': self.end_date
+                    }
+                ).fetchall()
+
+                db_event_ids = {row[0] for row in db_events}
+
+                # Find events in DB but not on calendar (deleted events)
+                deleted_event_ids = db_event_ids - calendar_event_ids
+
+                if deleted_event_ids:
+                    self.logger.info(f"  🗑️  Detected {len(deleted_event_ids)} deleted events")
+
+                    # Mark them as deleted in database
+                    for event_id in deleted_event_ids:
+                        session.execute(
+                            text("""
+                                UPDATE calendar_events
+                                SET deleted_at = NOW(),
+                                    status = 'deleted',
+                                    last_action = 'scanner_detected_deletion',
+                                    last_action_at = NOW()
+                                WHERE event_id = :event_id
+                                AND current_calendar = :calendar_id
+                                AND deleted_at IS NULL
+                            """),
+                            {'event_id': event_id, 'calendar_id': calendar_id}
+                        )
+
+                    session.commit()
+                    return len(deleted_event_ids)
+
+                return 0
+
+        except Exception as e:
+            self.logger.error(f"Error detecting deletions: {e}")
+            return 0
 
     def scan_all_calendars(self) -> Dict[str, Any]:
         """Scan all configured calendars and record events."""
@@ -330,6 +393,7 @@ class CalendarScanner:
                 'events_found': 0,
                 'events_recorded': 0,
                 'events_updated': 0,
+                'events_deleted': 0,
                 'errors': 0
             }
         }
@@ -344,6 +408,7 @@ class CalendarScanner:
                 results['totals']['events_found'] += stats['events_found']
                 results['totals']['events_recorded'] += stats['events_recorded']
                 results['totals']['events_updated'] += stats['events_updated']
+                results['totals']['events_deleted'] += stats.get('events_deleted', 0)
                 results['totals']['errors'] += stats['errors']
 
             except Exception as e:
@@ -361,6 +426,7 @@ class CalendarScanner:
         self.logger.info(f"Total events found: {results['totals']['events_found']}")
         self.logger.info(f"New events recorded: {results['totals']['events_recorded']}")
         self.logger.info(f"Existing events updated: {results['totals']['events_updated']}")
+        self.logger.info(f"Deleted events detected: {results['totals']['events_deleted']}")
         self.logger.info(f"Errors: {results['totals']['errors']}")
         self.logger.info("=" * 60)
 
@@ -368,9 +434,102 @@ class CalendarScanner:
             if 'error' in stats:
                 self.logger.error(f"  ❌ {calendar_name}: {stats['error']}")
             else:
-                self.logger.info(f"  ✅ {calendar_name}: {stats['events_found']} found, {stats['events_recorded']} new")
+                deleted_msg = f", {stats.get('events_deleted', 0)} deleted" if stats.get('events_deleted', 0) > 0 else ""
+                self.logger.info(f"  ✅ {calendar_name}: {stats['events_found']} found, {stats['events_recorded']} new{deleted_msg}")
+
+        # Remove deleted events from Google Calendar
+        self._remove_deleted_events()
 
         return results
+
+    def _remove_deleted_events(self):
+        """Remove events marked as deleted from Google Calendar."""
+        try:
+            from sqlalchemy import text
+
+            self.logger.info("🗑️  Removing deleted events from Google Calendar...")
+
+            # Get all events marked as deleted
+            with self.db.get_session() as session:
+                deleted_events = session.execute(
+                    text("""
+                        SELECT event_id, current_calendar, summary
+                        FROM calendar_events
+                        WHERE deleted_at IS NOT NULL
+                        AND status = 'deleted'
+                        AND last_action != 'removed_from_google'
+                        LIMIT 500
+                    """)
+                ).mappings().all()
+
+                if not deleted_events:
+                    self.logger.info("  No deleted events to remove")
+                    return
+
+                self.logger.info(f"  Found {len(deleted_events)} events to remove from Google Calendar")
+
+                removed_count = 0
+                error_count = 0
+
+                for event in deleted_events:
+                    try:
+                        # Attempt to delete from Google Calendar
+                        self.calendar_service.events().delete(
+                            calendarId=event['current_calendar'],
+                            eventId=event['event_id']
+                        ).execute()
+
+                        # Mark as removed in database
+                        session.execute(
+                            text("""
+                                UPDATE calendar_events
+                                SET last_action = 'removed_from_google',
+                                    last_action_at = NOW()
+                                WHERE event_id = :event_id
+                                AND current_calendar = :calendar_id
+                            """),
+                            {
+                                'event_id': event['event_id'],
+                                'calendar_id': event['current_calendar']
+                            }
+                        )
+
+                        removed_count += 1
+
+                    except HttpError as e:
+                        if e.resp.status == 404 or e.resp.status == 410:
+                            # Event already gone from Google Calendar
+                            session.execute(
+                                text("""
+                                    UPDATE calendar_events
+                                    SET last_action = 'already_removed',
+                                        last_action_at = NOW()
+                                    WHERE event_id = :event_id
+                                    AND current_calendar = :calendar_id
+                                """),
+                                {
+                                    'event_id': event['event_id'],
+                                    'calendar_id': event['current_calendar']
+                                }
+                            )
+                            removed_count += 1
+                        else:
+                            self.logger.error(f"  Failed to delete {event['summary']}: {e}")
+                            error_count += 1
+                    except Exception as e:
+                        self.logger.error(f"  Error deleting {event['summary']}: {e}")
+                        error_count += 1
+
+                session.commit()
+
+                self.logger.info(f"  ✅ Removed {removed_count} events from Google Calendar")
+                if error_count > 0:
+                    self.logger.warning(f"  ⚠️  {error_count} errors occurred")
+
+        except Exception as e:
+            self.logger.error(f"Error removing deleted events: {e}")
+            import traceback
+            traceback.print_exc()
 
 
 def main():

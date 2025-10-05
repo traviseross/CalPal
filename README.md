@@ -30,6 +30,7 @@ CalPal automates complex calendar management workflows for academic institutions
 - **PostgreSQL Database**: Single source of truth for all calendar events
 - **Intelligent Sync**: Tracks event lifecycle (created, moved, deleted, updated)
 - **Bidirectional Detection**: Identifies changes in both Google Calendar and 25Live
+- **Deletion Detection & Removal**: Automatically detects and removes deleted events from both database and Google Calendar
 - **Audit Trail**: Complete history of all event operations
 
 ### 25Live Integration
@@ -241,7 +242,7 @@ CalPal operates as a unified service with multiple coordinated components:
 | Service | Purpose | Run Frequency |
 |---------|---------|---------------|
 | **25Live Sync** | Pull events from 25Live API into database | Every 30 minutes |
-| **Calendar Scanner** | Scan Google Calendars for changes/deletions | Every 15 minutes |
+| **Calendar Scanner** | Scan Google Calendars for changes/deletions, remove deleted events | Every 15 minutes |
 | **Personal/Family Mirror** | Mirror personal/family events to subcalendars | Every 10 minutes |
 | **Work Event Organizer** | Sort and organize work calendar events | Every 5 minutes |
 | **Subcalendar Sync** | Ensure subcalendars mirrored to work calendar | Every 10 minutes |
@@ -297,7 +298,7 @@ We welcome contributions! Please see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md
 A: The 25Live integration is optional. You can use CalPal just for Google Calendar organization and ICS generation.
 
 **Q: What happens if I manually delete a synced event?**
-A: CalPal's database tracking detects deletions. The event will be marked as deleted and won't be re-created unless it appears again in the source.
+A: CalPal's Calendar Scanner automatically detects when events are deleted from Google Calendar and marks them as deleted in the database. This prevents them from being re-created and ensures bidirectional sync stays consistent.
 
 **Q: Can I customize the ICS output format?**
 A: Yes! Edit the filtering rules in `src/db_aware_wife_ics_generator.py` to customize event transformations.

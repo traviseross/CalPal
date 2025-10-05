@@ -52,13 +52,22 @@ def serve_ics_file(filename):
     if not os.path.exists(file_path):
         abort(404, description="Calendar file not found")
 
-    # Serve the ICS file
-    return send_file(
+    # Serve the ICS file with NO caching
+    # This ensures Flask always reads the file fresh from disk
+    response = send_file(
         file_path,
         mimetype='text/calendar',
         as_attachment=False,
-        download_name=filename
+        download_name=filename,
+        etag=False
     )
+
+    # Add headers to prevent all caching
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+
+    return response
 
 @app.route('/status')
 def status():
