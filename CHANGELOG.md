@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Deletion Detection & Removal** - Calendar Scanner now automatically detects and removes deleted events
+  - Detects events deleted from Google Calendar and marks them in database
+  - Removes events marked as deleted from Google Calendar (e.g., blacklisted events)
+  - Bidirectional sync ensures database and Google Calendar stay consistent
+  - Graceful handling of already-deleted events (404/410 errors)
+  - Batch processing up to 500 deletions per scan
+
+- **Flask Auto-Refresh** - ICS Generator now restarts Flask server after generating new files
+  - Ensures Flask always serves the latest ICS file
+  - Prevents stale file caching issues
+
+- **Event Blacklist Manager** - Interactive tool to manage unwanted 25Live events
+  - Support for exact match and regex pattern blacklisting
+  - Shows matching events in database
+  - Automatically marks matching events as deleted
+  - Integration with Calendar Scanner for removal
+
+### Changed
+- **Calendar Scanner** - Enhanced with deletion detection and removal capabilities
+  - Added `_detect_deletions()` method to compare calendar vs database
+  - Added `_remove_deleted_events()` method to delete from Google Calendar
+  - New database event states: `scanner_detected_deletion`, `removed_from_google`, `already_removed`
+
+- **Flask Server** - Disabled ICS file caching for always-fresh content
+  - Added no-cache headers: `Cache-Control: no-cache, no-store, must-revalidate`
+  - Disabled etag caching
+  - Ensures clients always receive latest calendar data
+
+### Fixed
+- **ICS File Staleness** - Flask no longer caches ICS files, always serves fresh content
+- **Blacklisted Events Not Removed** - Calendar Scanner now removes blacklisted events from Google Calendar
+- **Deletion Detection Missing** - System now detects when events are manually deleted from calendars
+
+### Documentation
+- Updated SERVICES.md with comprehensive deletion detection documentation
+- Added deletion flow diagrams and state transition examples
+- Documented Flask cache control and auto-restart behavior
+- Updated README.md to highlight deletion detection feature
+- Added database event state documentation
+
 ### Planned Features
 - Migration tracking system in database
 - Web UI for configuration and monitoring
