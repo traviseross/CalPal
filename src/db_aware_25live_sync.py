@@ -146,6 +146,27 @@ class DBAware25LiveSync:
 
         return False
 
+    def check_deleted_event(self, reservation_id: str, calendar_id: str) -> bool:
+        """Check if an event with this reservation_id was previously deleted."""
+        try:
+            from sqlalchemy import text
+            with self.db.get_session() as session:
+                result = session.execute(
+                    text("""
+                        SELECT COUNT(*) as count
+                        FROM calendar_events
+                        WHERE metadata->>'25live_reservation_id' = :reservation_id
+                        AND current_calendar = :calendar_id
+                        AND deleted_at IS NOT NULL
+                    """),
+                    {"reservation_id": reservation_id, "calendar_id": calendar_id}
+                ).fetchone()
+
+                return result[0] > 0 if result else False
+        except Exception as e:
+            self.logger.error(f"Error checking deleted event: {e}")
+            return False
+
     def authenticate_25live(self):
         """Authenticate with 25Live."""
         self.logger.info("🔐 Authenticating with 25Live...")
@@ -576,9 +597,17 @@ class DBAware25LiveSync:
                         # Check if event already exists in database (by 25Live reservation ID + calendar)
                         reservation_id = event_data['metadata'].get('25live_reservation_id')
                         if reservation_id:
-                            # Check database for existing event with this 25Live ID
+                            # Check database for existing ACTIVE event with this 25Live ID
                             existing = self.db.get_event_by_25live_id(reservation_id, calendar_id)
                             if existing:
+                                stats['duplicates_skipped'] += 1
+                                continue
+
+                            # CRITICAL: Check for DELETED events with this reservation_id
+                            # If user manually deleted it, don't recreate it!
+                            deleted_event = self.check_deleted_event(reservation_id, calendar_id)
+                            if deleted_event:
+                                self.logger.debug(f"Skipping previously deleted event: {event_data.get('summary')}")
                                 stats['duplicates_skipped'] += 1
                                 continue
                         else:
