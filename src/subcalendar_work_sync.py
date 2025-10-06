@@ -50,6 +50,9 @@ class SubcalendarWorkSync:
         # Load calendar IDs
         self.load_calendars()
 
+        # Load event blacklist
+        self.load_event_blacklist()
+
     def _initialize_calendar_service(self):
         """Initialize Google Calendar API service."""
         try:
@@ -82,6 +85,43 @@ class SubcalendarWorkSync:
         }
 
         self.logger.info("✅ Loaded calendar IDs")
+
+    def load_event_blacklist(self):
+        """Load event blacklist from event_blacklist.json."""
+        try:
+            import re
+            blacklist_file = os.path.join(DATA_DIR, 'event_blacklist.json')
+            with open(blacklist_file, 'r') as f:
+                blacklist_data = json.load(f)
+
+            self.blacklisted_events = set(blacklist_data.get('blacklisted_events', []))
+            self.blacklist_patterns = [
+                re.compile(pattern)
+                for pattern in blacklist_data.get('blacklist_patterns', [])
+            ]
+
+            self.logger.info(f"✅ Loaded event blacklist ({len(self.blacklisted_events)} exact matches, {len(self.blacklist_patterns)} patterns)")
+        except FileNotFoundError:
+            self.logger.warning("⚠️  No event blacklist file found, allowing all events")
+            self.blacklisted_events = set()
+            self.blacklist_patterns = []
+        except Exception as e:
+            self.logger.error(f"❌ Failed to load event blacklist: {e}")
+            self.blacklisted_events = set()
+            self.blacklist_patterns = []
+
+    def is_event_blacklisted(self, summary: str) -> bool:
+        """Check if event summary is blacklisted."""
+        # Check exact matches
+        if summary in self.blacklisted_events:
+            return True
+
+        # Check regex patterns
+        for pattern in self.blacklist_patterns:
+            if pattern.search(summary):
+                return True
+
+        return False
 
     def get_subcalendar_events(self, calendar_id: str) -> List[Dict]:
         """Get all events from a subcalendar that should be mirrored."""
@@ -298,6 +338,12 @@ class SubcalendarWorkSync:
                 # Skip if this is already a mirror FROM Work
                 if self.is_mirror_from_work(event):
                     stats['skipped_work_mirrors'] += 1
+                    continue
+
+                # Skip if event is blacklisted
+                if self.is_event_blacklisted(summary):
+                    self.logger.debug(f"Skipping blacklisted event: {summary}")
+                    stats['skipped_work_mirrors'] += 1  # Reuse this counter
                     continue
 
                 # Skip if this event already exists on Work (by ical_uid) and wasn't created by service account
