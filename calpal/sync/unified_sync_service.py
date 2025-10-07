@@ -26,14 +26,14 @@ from typing import Dict, Any
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import *
-from src.db_manager import DatabaseManager
-from src.db_aware_25live_sync import DBAware25LiveSync
-from src.calendar_scanner import CalendarScanner
-from src.personal_family_mirror import PersonalFamilyMirror
-from src.work_event_organizer import WorkEventOrganizer
-from src.subcalendar_work_sync import SubcalendarWorkSync
-from src.db_aware_wife_ics_generator import DBWifeICSGenerator
-from src.work_calendar_reconciler import WorkCalendarReconciler
+from calpal.core.db_manager import DatabaseManager
+from calpal.sync.twentyfive_live_sync import DBAware25LiveSync
+from calpal.sync.calendar_scanner import CalendarScanner
+from calpal.organizers.mirror_manager import PersonalFamilyMirror
+from calpal.organizers.event_organizer import WorkEventOrganizer
+from calpal.organizers.subcalendar_sync import SubcalendarWorkSync
+from calpal.generators.ics_generator import DBWifeICSGenerator
+from calpal.organizers.reconciler import WorkCalendarReconciler
 
 
 class UnifiedCalPalService:

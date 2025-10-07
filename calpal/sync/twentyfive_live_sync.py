@@ -36,7 +36,7 @@ from googleapiclient.errors import HttpError
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import *
-from src.db_manager import DatabaseManager
+from calpal.core.db_manager import DatabaseManager
 
 
 class DBAware25LiveSync:

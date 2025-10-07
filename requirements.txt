@@ -1,3 +1,8 @@
+# ============================================================================
+# CalPal - Calendar Synchronization System
+# Python Dependencies (Frozen Versions)
+# ============================================================================
+
 # Core Google Calendar API
 google-api-python-client==2.182.0
 google-auth==2.40.3
@@ -21,5 +26,44 @@ pytz==2025.2
 psycopg2-binary==2.9.10
 SQLAlchemy==2.0.36
 
+# Environment variable management
+python-dotenv==1.0.0
+
 # Additional dependencies (auto-installed by above packages)
 requests-oauthlib==2.0.0
+urllib3==2.3.0
+certifi==2025.1.25
+charset-normalizer==3.4.1
+
+# ============================================================================
+# Installation Instructions
+# ============================================================================
+#
+# 1. Create virtual environment:
+#    python3 -m venv venv
+#
+# 2. Activate virtual environment:
+#    source venv/bin/activate  # On macOS/Linux
+#    venv\Scripts\activate     # On Windows
+#
+# 3. Install dependencies:
+#    pip install -r requirements.txt
+#
+# 4. Verify installation:
+#    pip list
+#
+# ============================================================================
+# Updating Dependencies
+# ============================================================================
+#
+# To update all dependencies to latest versions:
+#    pip install --upgrade -r requirements.txt
+#    pip freeze > requirements.txt
+#
+# To update a specific package:
+#    pip install --upgrade package-name
+#    pip freeze > requirements.txt
+#
+# IMPORTANT: Test thoroughly after updating dependencies!
+#
+# ============================================================================

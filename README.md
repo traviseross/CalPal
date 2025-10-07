@@ -98,23 +98,36 @@ CalPal automates complex calendar management workflows for academic institutions
 
 ```
 CalPal/
-├── src/                           # Core application modules
-│   ├── unified_db_calpal_service.py    # Main coordinating service
-│   ├── db_aware_25live_sync.py         # 25Live to database sync
-│   ├── calendar_scanner.py             # Google Calendar scanner
-│   ├── work_event_organizer.py         # Event organization logic
-│   ├── db_aware_wife_ics_generator.py  # Database-backed ICS generation
-│   ├── db_manager.py                   # Database operations
-│   └── calpal_flask_server.py          # Web server for ICS hosting
-├── docs/                          # Documentation
-│   ├── DATABASE.md                     # Database schema & operations
-│   ├── INSTALLATION.md                 # Setup instructions
-│   ├── CONFIGURATION.md                # Configuration guide
-│   └── SERVICES.md                     # Service documentation
-├── db/                            # Database files
-│   ├── init/                           # Schema initialization
-│   └── migrations/                     # Database migrations
+├── calpal/                        # Main package
+│   ├── core/                          # Core database and infrastructure
+│   │   └── db_manager.py                  # Database operations
+│   ├── sync/                          # Synchronization services
+│   │   ├── twentyfive_live_sync.py        # 25Live API integration
+│   │   ├── calendar_scanner.py            # Google Calendar scanning
+│   │   ├── calendar_writer.py             # Calendar write operations
+│   │   └── unified_sync_service.py        # Main coordinating service
+│   ├── organizers/                    # Event organization logic
+│   │   ├── event_organizer.py             # Event sorting and routing
+│   │   ├── mirror_manager.py              # Calendar mirroring
+│   │   ├── subcalendar_sync.py            # Subcalendar synchronization
+│   │   └── reconciler.py                  # Calendar reconciliation
+│   └── generators/                    # ICS file generation
+│       ├── ics_generator.py               # Database-backed ICS generation
+│       └── ics_server.py                  # Flask web server for ICS hosting
+├── tools/                         # Utility scripts
+│   └── manage_blacklist.py            # Event blacklist management
+├── config/                        # Configuration templates
+│   ├── calendars.example.json         # Calendar ID template
+│   └── 25live_queries.example.json    # 25Live query template
+├── docs/                          # Documentation (to be created)
+│   ├── architecture.md                # System architecture
+│   ├── getting-started.md             # Quick start guide
+│   └── api-reference.md               # API documentation
+├── db/                            # Database setup
+│   ├── init/                          # Schema initialization
+│   └── migrations/                    # Database migrations
 ├── config.example.py              # Configuration template
+├── .env.example                   # Environment variables template
 ├── requirements.txt               # Python dependencies
 └── docker-compose.yml             # Database container setup
 ```
@@ -146,8 +159,14 @@ CalPal/
 
 3. **Configure CalPal**
    ```bash
+   # Copy configuration templates
    cp config.example.py config.py
-   # Edit config.py with your institution's settings
+   cp .env.example .env
+   cp config/calendars.example.json data/work_subcalendars.json
+
+   # Edit config files with your institution's settings
+   nano config.py
+   nano .env
    ```
 
 4. **Start the database**
@@ -160,24 +179,30 @@ CalPal/
    ```bash
    mkdir -p ~/.config/calpal
    # Place service-account-key.json in ~/.config/calpal/
-   # Create 25live_credentials file with username and password
+   # Create 25live_credentials file with username and password (one per line)
+   echo "your-username" > ~/.config/calpal/25live_credentials
+   echo "your-password" >> ~/.config/calpal/25live_credentials
    ```
 
 6. **Run the unified service**
    ```bash
-   python3 src/unified_db_calpal_service.py
+   # Using the main entry point (recommended)
+   python3 -m calpal.sync.unified_sync_service
+
+   # Or run individual components
+   python3 -m calpal.sync.twentyfive_live_sync  # 25Live sync only
+   python3 -m calpal.sync.calendar_scanner      # Calendar scanning only
    ```
 
-For detailed installation instructions, see [docs/INSTALLATION.md](docs/INSTALLATION.md).
+For detailed installation instructions, see [docs/getting-started.md](docs/getting-started.md).
 
 ## Documentation
 
-- **[Installation Guide](docs/INSTALLATION.md)** - Complete setup instructions
-- **[Configuration Guide](docs/CONFIGURATION.md)** - All configuration options
-- **[Database Documentation](docs/DATABASE.md)** - Database schema and operations
-- **[Services Documentation](docs/SERVICES.md)** - Service components and APIs
-- **[Security Guide](docs/SECURITY.md)** - Security best practices
-- **[Contributing Guidelines](docs/CONTRIBUTING.md)** - How to contribute
+- **[Getting Started](docs/getting-started.md)** - Quick start guide and basic setup
+- **[Architecture Guide](docs/architecture.md)** - System design and components
+- **[API Reference](docs/api-reference.md)** - Developer API documentation
+- **[Configuration Guide](docs/configuration.md)** - All configuration options
+- **[Security Guide](docs/security.md)** - Security best practices
 
 ## Configuration
 
@@ -202,7 +227,7 @@ CALENDAR_MAPPINGS = {
 }
 ```
 
-See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for complete configuration reference.
+See [docs/configuration.md](docs/configuration.md) for complete configuration reference.
 
 ## Security
 
@@ -214,7 +239,7 @@ CalPal implements multiple security layers:
 - **API Key Protection**: Service account keys never committed to git
 - **Environment Separation**: Development vs production configurations
 
-For detailed security information, see [docs/SECURITY.md](docs/SECURITY.md).
+For detailed security information, see [docs/security.md](docs/security.md).
 
 ## Use Cases
 
@@ -278,19 +303,19 @@ ls -la ~/.config/calpal/service-account-key.json
 cat ~/.config/calpal/25live_credentials
 ```
 
-For more troubleshooting, see [docs/SERVICES.md](docs/SERVICES.md).
+For more troubleshooting, see [docs/architecture.md](docs/architecture.md).
 
 ## Contributing
 
-We welcome contributions! Please see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
+We welcome contributions! CalPal is an open-source project that benefits from community involvement.
 
 **Quick Contribution Guide:**
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes with clear commit messages
-4. Add tests for new functionality
+4. Ensure all imports use the `calpal.` package structure
 5. Update documentation as needed
-6. Submit a pull request
+6. Submit a pull request with a clear description
 
 ## FAQ
 
@@ -301,13 +326,13 @@ A: The 25Live integration is optional. You can use CalPal just for Google Calend
 A: CalPal's Calendar Scanner automatically detects when events are deleted from Google Calendar and marks them as deleted in the database. This prevents them from being re-created and ensures bidirectional sync stays consistent.
 
 **Q: Can I customize the ICS output format?**
-A: Yes! Edit the filtering rules in `src/db_aware_wife_ics_generator.py` to customize event transformations.
+A: Yes! Edit the filtering rules in `calpal/generators/ics_generator.py` to customize event transformations.
 
 **Q: How do I back up my CalPal database?**
-A: See [docs/DATABASE.md](docs/DATABASE.md#backup-and-restore) for backup procedures.
+A: See [docs/architecture.md](docs/architecture.md) for database backup procedures.
 
 **Q: Is this suitable for production use?**
-A: CalPal is production-ready. Ensure you follow the security guidelines in [docs/SECURITY.md](docs/SECURITY.md).
+A: CalPal is production-ready. Ensure you follow the security guidelines in [docs/security.md](docs/security.md).
 
 ## Changelog
 

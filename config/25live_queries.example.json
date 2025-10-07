@@ -1,0 +1,24 @@
+{
+  "_comment": "25Live Query Configuration",
+  "_description": "Configure your 25Live event filters and queries. Copy to private/25live_queries.json and customize.",
+  "_instructions": [
+    "1. Copy this file to private/25live_queries.json",
+    "2. Customize the filters below for your institution",
+    "3. Keep this file private - do not commit to version control"
+  ],
+  "classes_query": {
+    "event_type_id": "14",
+    "description": "Query for academic class events",
+    "filters": {
+      "event_type": "14",
+      "state": "2"
+    }
+  },
+  "events_query": {
+    "event_type_id": "all",
+    "description": "Query for institutional events",
+    "filters": {
+      "state": "2"
+    }
+  }
+}

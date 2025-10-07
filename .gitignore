@@ -1,81 +1,143 @@
-# Virtual Environment
+# ============================================================================
+# CalPal .gitignore - Prevents sensitive data and generated files from being committed
+# ============================================================================
+
+# ============================================================================
+# CRITICAL: SENSITIVE DATA - Never commit these files
+# ============================================================================
+
+# Configuration files with credentials and calendar IDs
+config.py
+
+# Environment variables
+.env
+.venv
+
+# API credentials and service account keys
+credentials.json
+token.json
+*_credentials.json
+*_token.json
+*credentials*
+25live_credentials
+service-account-key.json
+*.pem
+*.key
+
+# Personal data directories containing calendar IDs, event data, etc.
+private/
+data/
+logs/
+metadata/
+
+# Archive files (may contain real event data from testing/debugging)
+archives/
+
+# Generated calendar files (may contain personal schedule information)
+*.ics
+
+# Calendar metadata and results files (contain real calendar/event IDs)
+*_metadata.json
+*schedule*.json
+*calendar*.json
+*_results.json
+*mirror*.json
+
+# Database dumps and backups (contain all personal event data)
+*.sql
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================================
+# Python Environment
+# ============================================================================
+
+# Virtual environment
 bin/
 lib/
 lib64/
 share/
 pyvenv.cfg
 include/
+venv/
+ENV/
+env/
 
-# Python Cache
+# Python cache and compiled files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+*.py[cod]
+*$py.class
 
-# Environment Variables
-.env
-.venv
+# ============================================================================
+# Development Tools
+# ============================================================================
 
-# IDE
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+.Spotlight-V100
+.Trashes
 
-# Logs
-*.log
+# ============================================================================
+# Build and Distribution
+# ============================================================================
 
-# Temporary files
-*.tmp
-*.temp
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
 
 # Test coverage
 .coverage
 htmlcov/
+.pytest_cache/
+.tox/
 
-# Distribution
-build/
-dist/
-*.egg-info/
+# Documentation builds
+docs/_build/
 
-# Configuration files (contains sensitive data)
-config.py
+# ============================================================================
+# Temporary and Generated Files
+# ============================================================================
 
-# Generated files
-*.ics
-*_metadata.json
-metadata/
-
-# API keys and credentials
-credentials.json
-token.json
-*_credentials.json
-*_token.json
-25live_credentials
-service-account-key.json
-
-# Backup files
-*.bak
-*.backup
-*~
-
-# Personal/Sensitive Data Directories
-private/
-data/
+# Logs
+*.log
 logs/
 
-# Archive files (development/debug files)
-archives/
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
 
-# Personal calendar data
-*.ics
-*schedule*.json
-*calendar*.json
+# Editor backup files
+*~
+.*.swp
+.*.swo
 
-# Development requirements (full environment freeze)
+# Development requirements (full environment freeze - too specific)
 requirements-dev.txt
+
+# ============================================================================
+# Security Notes
+# ============================================================================
+# IMPORTANT: Before committing, always:
+# 1. Review changes with `git diff` to ensure no sensitive data
+# 2. Check that calendar IDs are sanitized or use placeholders
+# 3. Verify no API keys, tokens, or credentials are included
+# 4. Ensure email addresses are generic placeholders
+# ============================================================================

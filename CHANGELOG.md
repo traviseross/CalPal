@@ -7,13 +7,180 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2025-10-07
+
+### 🎉 Public Release - Complete Repository Restructure
+
+This major release restructures CalPal for public distribution with a proper Python package structure, comprehensive documentation, and complete removal of sensitive data.
+
 ### Added
+- **New Package Structure** - Organized into proper Python package `calpal/`
+  - `calpal.core` - Core database and infrastructure (DatabaseManager)
+  - `calpal.sync` - Synchronization services (25Live, Calendar Scanner, Unified Sync)
+  - `calpal.organizers` - Event organization logic (Event Organizer, Mirror Manager, Reconciler)
+  - `calpal.generators` - ICS generation and web server
+- **Configuration Templates** - Ready-to-use examples for new users
+  - `config.example.py` - Main configuration template
+  - `.env.example` - Environment variables template
+  - `config/calendars.example.json` - Calendar ID mappings template
+  - `config/25live_queries.example.json` - 25Live query configuration template
+- **Comprehensive Documentation** in `docs/`
+  - `getting-started.md` - Complete setup guide with prerequisites and installation
+  - `architecture.md` - System design, components, and data flow diagrams
+  - `api-reference.md` - Developer API documentation for all modules
+  - `configuration.md` - Complete configuration reference
+  - `security.md` - Security best practices and compliance guidelines
+- **Enhanced .gitignore** - Comprehensive protection against committing sensitive data
+  - Organized into sections: sensitive data, Python environment, build artifacts
+  - Inline documentation explaining what each section protects
+  - Security reminders and best practices
+- **Tools Directory** - Utility scripts for maintenance
+  - `tools/manage_blacklist.py` - Event blacklist management utility
+
+### Changed
+- **BREAKING: Import Structure** - All imports now use `calpal.` package prefix
+  - Old: `from src.db_manager import DatabaseManager`
+  - New: `from calpal.core.db_manager import DatabaseManager`
+- **File Organization** - Renamed and reorganized for clarity
+  - `db_aware_25live_sync.py` → `calpal/sync/twentyfive_live_sync.py`
+  - `calendar_scanner.py` → `calpal/sync/calendar_scanner.py`
+  - `unified_db_calpal_service.py` → `calpal/sync/unified_sync_service.py`
+  - `unified_calendar_sync.py` → `calpal/sync/calendar_writer.py`
+  - `work_event_organizer.py` → `calpal/organizers/event_organizer.py`
+  - `personal_family_mirror.py` → `calpal/organizers/mirror_manager.py`
+  - `work_calendar_reconciler.py` → `calpal/organizers/reconciler.py`
+  - `subcalendar_work_sync.py` → `calpal/organizers/subcalendar_sync.py`
+  - `db_aware_wife_ics_generator.py` → `calpal/generators/ics_generator.py`
+  - `calpal_flask_server.py` → `calpal/generators/ics_server.py`
+- **README.md** - Complete rewrite for public audience
+  - Professional project description and features
+  - Clear architecture diagrams
+  - Updated directory structure
+  - Installation instructions using new package structure
+  - Links to new documentation
+- **requirements.txt** - Enhanced with installation instructions and update guidelines
+
+### Removed
+- **Sensitive Data Sanitization** - Complete removal of private information
+  - All personal email addresses removed
+  - Real calendar IDs replaced with placeholders
+  - Institution-specific references genericized
+  - Hardcoded credentials removed
+- **Obsolete Files** - Cleaned up 51+ deprecated files
+  - Old troubleshooting scripts
+  - Temporary test files
+  - Archived debugging utilities
+  - Generated reports and results
+  - Legacy sync scripts
+- **Old Documentation** - Replaced with clean, professional docs
+  - Removed docs with embedded sensitive data
+
+### Security
+- **Complete Data Sanitization** - All sensitive information removed from codebase
+  - Email addresses: genericized to `example.com`, `institution.edu`
+  - Calendar IDs: replaced with `your-calendar-id@group.calendar.google.com`
+  - API tokens: moved to environment variables
+  - Database credentials: externalized to `.env`
+- **Configuration Security** - All credentials now externalized
+  - Service account keys: `~/.config/calpal/service-account-key.json` (never committed)
+  - 25Live credentials: `~/.config/calpal/25live_credentials` (never committed)
+  - Database passwords: `.env` file (never committed)
+- **Enhanced .gitignore** - Multiple layers of protection
+  - Blocks all credential files
+  - Prevents committing personal data directories
+  - Protects generated files with calendar data
+  - Includes security checklist in comments
+
+### Migration Guide
+
+**For existing users:**
+
+1. **Back up your current installation**
+   ```bash
+   cp -r CalPal CalPal.backup
+   ```
+
+2. **Update imports in any custom scripts**
+   ```python
+   # Old imports
+   from src.db_manager import DatabaseManager
+   from src.calendar_scanner import CalendarScanner
+
+   # New imports
+   from calpal.core.db_manager import DatabaseManager
+   from calpal.sync.calendar_scanner import CalendarScanner
+   ```
+
+3. **Run services with new paths**
+   ```bash
+   # Old
+   python3 src/unified_db_calpal_service.py
+
+   # New
+   python3 -m calpal.sync.unified_sync_service
+   ```
+
+4. **Update systemd service files** (if using)
+   ```ini
+   # Change ExecStart to:
+   ExecStart=/path/to/venv/bin/python3 -m calpal.sync.unified_sync_service
+   ```
+
+**For new users:**
+- Follow the complete setup guide in `docs/getting-started.md`
+- All configuration is now template-based - no hardcoded values
+
+## [1.x.x] - Previous Versions
+
+### Added
+- **Phase 2: Single Writer Pattern** - Architectural upgrade to prevent race conditions
+  - New `unified_calendar_sync.py` service: single source of truth for Google Calendar writes
+  - Database is now authoritative source, Google Calendar is presentation layer
+  - Orphaned mirror detection and automatic cleanup
+  - Batch processing with `--batch-size` and `--deletions-only` flags
+  - **Systemd Services**: Replaced cron jobs with proper systemd timers
+    - `calpal-scanner.timer`: Runs scanner hourly to detect manual deletions
+    - `calpal-sync.timer`: Runs unified sync every 30 minutes (deletions-only)
+  - Created `cleanup_all_deletions.sh` for overnight batch cleanup
+
+### Changed
+- **25Live Sync** - Converted to DB-only mode (no direct Google Calendar writes)
+  - **CRITICAL FIX**: Now checks BOTH `25live_reservation_id` AND `25live_event_id` for deletions
+  - Prevents infinite re-creation bug (e.g., CCC President's Meeting recreated 418 times)
+  - Events marked as `pending_creation` in database
+  - unified_calendar_sync handles Google Calendar creation
+
+- **Calendar Scanner** - Converted to read-only mode
+  - Removed `_remove_deleted_events()` method
+  - Deletion now handled exclusively by unified_calendar_sync
+  - Prevents race conditions between multiple services
+
+- **ICS Generator** - Converted to database-only source (Phase 2 complete)
+  - No longer queries Google Calendar directly
+  - Reads all events from PostgreSQL database
+  - **Anonymization**: Student appointments show as "Student appointment"
+  - **Location Enhancement**: Classes show location (e.g., "Class in Ross Center ROS 105")
+  - Excludes Personal and Family calendars
+  - Respects database `deleted_at` field
+  - Auto-restarts Flask server after generation
+
+### Added (from previous work)
 - **Deletion Detection & Removal** - Calendar Scanner now automatically detects and removes deleted events
   - Detects events deleted from Google Calendar and marks them in database
   - Removes events marked as deleted from Google Calendar (e.g., blacklisted events)
   - Bidirectional sync ensures database and Google Calendar stay consistent
   - Graceful handling of already-deleted events (404/410 errors)
   - Batch processing up to 500 deletions per scan
+
+- **Recently Deleted Event Protection** - Prevents infinite deletion/re-creation loops
+  - New `check_recently_deleted()` method in DatabaseManager
+  - Scanner skips events deleted within last hour (configurable window)
+  - Prevents race condition between reconciler deletion and scanner re-creation
+
+- **Two-Layer Rate Limiting** - Comprehensive Google Calendar API rate limit handling
+  - **Proactive throttling**: 100ms delay between API calls (10 QPS, well under Google's limit)
+  - **Reactive backoff**: Exponential backoff (2s, 4s, 8s, 16s...) with automatic retry on rate limit hits
+  - Eliminates 200+ rate limit errors per scan
 
 - **Flask Auto-Refresh** - ICS Generator now restarts Flask server after generating new files
   - Ensures Flask always serves the latest ICS file
@@ -26,10 +193,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Integration with Calendar Scanner for removal
 
 ### Changed
-- **Calendar Scanner** - Enhanced with deletion detection and removal capabilities
+- **Calendar Scanner** - Major improvements to event classification and rate limiting
+  - Now recognizes subcalendar mirrors via `mirror_type='subcalendar_to_work'` in extendedProperties
+  - Always updates events on each scan (not just when times/summary change)
+  - Checks for `event_type` changes and auto-corrects misclassifications
+  - Skips recently deleted events to prevent re-creation loops
   - Added `_detect_deletions()` method to compare calendar vs database
-  - Added `_remove_deleted_events()` method to delete from Google Calendar
+  - Added `_remove_deleted_events()` method with rate limiting
   - New database event states: `scanner_detected_deletion`, `removed_from_google`, `already_removed`
+
+- **Database Manager** - Enhanced event tracking and duplicate prevention
+  - `record_event()` now updates `event_type` field (fixes misclassifications)
+  - New `check_recently_deleted()` method with configurable time window
+  - Better handling of event lifecycle transitions
+
+- **Work Calendar Reconciler** - Improved orphaned event detection
+  - Now handles orphaned mirrors of ANY event_type (not just 'subcalendar_work_mirror')
+  - Queries ALL events with `source_event_id` for comprehensive cleanup
+  - Prevents orphaned events from escaping detection due to misclassification
 
 - **Flask Server** - Disabled ICS file caching for always-fresh content
   - Added no-cache headers: `Cache-Control: no-cache, no-store, must-revalidate`
@@ -37,6 +218,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ensures clients always receive latest calendar data
 
 ### Fixed
+- **CRITICAL: Infinite Duplicate Loop** - Fixed 4 critical leaks causing deletion/re-creation loop
+  - **Leak #1**: Scanner now correctly identifies subcalendar mirrors (was misclassifying as 'other')
+  - **Leak #2**: Scanner no longer re-creates recently deleted events (1-hour cooldown)
+  - **Leak #3**: Reconciler now cleans up orphaned events of any type (not just typed correctly)
+  - **Leak #4**: Scanner auto-corrects event_type misclassifications on subsequent scans
+  - Result: 149 mistyped events will auto-correct, 7 persistent problem events will be removed
+
+- **Google Calendar API Rate Limiting** - Eliminated 200+ rate limit errors per scan
+  - Added proactive 100ms delay between API calls (prevents rate limits)
+  - Added reactive exponential backoff with retry (handles edge cases)
+  - Scanner now completes deletion phase without errors
+
+- **Event Misclassification** - Events now correctly classified and auto-corrected
+  - Subcalendar mirrors properly detected via extendedProperties metadata
+  - Existing misclassifications fixed on next scan
+  - Prevents orphaned events from escaping cleanup
+
 - **ICS File Staleness** - Flask no longer caches ICS files, always serves fresh content
 - **Blacklisted Events Not Removed** - Calendar Scanner now removes blacklisted events from Google Calendar
 - **Deletion Detection Missing** - System now detects when events are manually deleted from calendars
