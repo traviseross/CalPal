@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-10-07
+
+### 🔒 CRITICAL SECURITY FIX
+
+**Removed legacy `src/` directory containing sensitive data**
+
+This hotfix addresses a critical security vulnerability identified in independent review:
+- The old `src/` directory was not deleted during the v2.0.0 restructure
+- It contained hardcoded sensitive information that was supposed to be removed
+- All functionality has been moved to the sanitized `calpal/` package
+
+### Removed
+- **Entire `src/` directory** with all legacy Python files
+  - Removed hardcoded Google Calendar ID in `src/personal_family_mirror.py`
+  - Removed hardcoded service account email in `src/subcalendar_work_sync.py`
+  - Removed all other unsanitized legacy files
+
+### Added
+- `src/README.md` - Migration guide pointing to new `calpal/` structure
+
+### Security
+- **Complete removal of legacy code** containing sensitive data
+- No functionality lost - all code already migrated to `calpal/` in v2.0.0
+
+**Impact:** High - This fixes a data leak that exposed private calendar IDs and service account emails. Users who cloned between v2.0.0 and v2.0.1 should pull this update immediately.
+
 ## [2.0.0] - 2025-10-07
 
 ### 🎉 Public Release - Complete Repository Restructure
