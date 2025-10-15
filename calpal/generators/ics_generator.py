@@ -3,12 +3,13 @@
 Database-Aware Shared Calendar ICS Generator
 
 Generates ICS file from database events with filtering rules:
-- Exclude events from Family calendar
-- Exclude events from Personal calendar
-- Exclude events that have been deleted from Work calendar (deleted_at IS NOT NULL)
+- Exclude events from Family calendar (source)
+- Include events from Work calendar
+- Include events from Personal calendar
+- Exclude events that have been deleted (deleted_at IS NOT NULL)
 - Include everything else with full details
 
-This ensures the ICS file shows only work-related events that are currently active.
+This ensures the ICS file shows both work and personal events for scheduling.
 """
 
 import json
@@ -68,9 +69,8 @@ class DBWifeICSGenerator:
                         AND start_time <= :time_max
                         AND deleted_at IS NULL
                         AND status = 'active'
-                        AND source_calendar != :personal_calendar
                         AND source_calendar != :family_calendar
-                        AND current_calendar = :work_calendar
+                        AND (current_calendar = :work_calendar OR current_calendar = :personal_calendar)
                         ORDER BY event_id, current_calendar, start_time
                     """),
                     {

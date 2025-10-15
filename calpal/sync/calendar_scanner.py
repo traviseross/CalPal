@@ -257,6 +257,15 @@ class CalendarScanner:
             if ext_props:
                 metadata['google_event_data'] = ext_props
 
+            # For mirror events, source_calendar should point to the source event's calendar
+            # Extract from extended properties if this is a mirror
+            source_calendar_value = calendar_id
+            if event_type in ('subcalendar_work_mirror', 'family_work_mirror', 'personal_work_mirror', 'meeting_mirror'):
+                # Check extended properties for mirror_source
+                mirror_source = private.get('mirror_source', '')
+                if mirror_source:
+                    source_calendar_value = mirror_source
+
             # Build database event
             db_event = {
                 'event_id': event_id,
@@ -266,7 +275,7 @@ class CalendarScanner:
                 'location': event.get('location', ''),
                 'start_time': start_time,
                 'end_time': end_time,
-                'source_calendar': calendar_id,
+                'source_calendar': source_calendar_value,
                 'current_calendar': calendar_id,
                 'event_type': event_type,
                 'is_attendee_event': is_attendee_event,

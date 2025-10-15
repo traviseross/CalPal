@@ -123,6 +123,28 @@ class SubcalendarWorkSync:
 
         return False
 
+    def _get_color_for_source(self, source_calendar_id: str) -> str:
+        """
+        Get Google Calendar colorId for source calendar.
+
+        Color IDs:
+        - 9: Blue (Classes)
+        - 10: Green (GFU Events)
+        - 5: Yellow (Appointments)
+        - 11: Red (Meetings)
+        """
+        # Match against known subcalendars
+        if source_calendar_id == self.subcalendars.get('Classes'):
+            return '9'  # Blue
+        elif source_calendar_id == self.subcalendars.get('GFU Events'):
+            return '10'  # Green
+        elif source_calendar_id == self.subcalendars.get('Appointments'):
+            return '5'  # Yellow
+        elif source_calendar_id == self.subcalendars.get('Meetings'):
+            return '11'  # Red
+        else:
+            return '1'  # Default: Lavender
+
     def get_subcalendar_events(self, calendar_id: str) -> List[Dict]:
         """Get all events from a subcalendar that should be mirrored."""
         try:
@@ -219,6 +241,10 @@ class SubcalendarWorkSync:
             end_time = source_event['end_time']
             is_all_day = source_event.get('is_all_day', False)
 
+            # Determine color based on source calendar
+            source_calendar_id = source_event['current_calendar']
+            color_id = self._get_color_for_source(source_calendar_id)
+
             # Build event body
             if is_all_day:
                 event_body = {
@@ -232,7 +258,8 @@ class SubcalendarWorkSync:
                     'end': {
                         'date': end_time.strftime('%Y-%m-%d'),
                         'timeZone': 'America/Los_Angeles'
-                    }
+                    },
+                    'colorId': color_id
                 }
             else:
                 event_body = {
@@ -246,7 +273,8 @@ class SubcalendarWorkSync:
                     'end': {
                         'dateTime': end_time.isoformat(),
                         'timeZone': 'America/Los_Angeles'
-                    }
+                    },
+                    'colorId': color_id
                 }
 
             # Add metadata
