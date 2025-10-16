@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import *
 from calpal.sync.twentyfive_live_sync import DBAware25LiveSync
 from calpal.generators.ics_generator import DBWifeICSGenerator
+from calpal.organizers.personal_mirror import PersonalMirror
 
 
 class SimplifiedCalPalService:
@@ -38,6 +39,7 @@ class SimplifiedCalPalService:
         # Component schedules (in minutes)
         self.schedules = {
             '25live_sync': {'interval': 30, 'last_run': None},
+            'personal_mirror': {'interval': 10, 'last_run': None},
             'ics_generator': {'interval': 5, 'last_run': None}
         }
 
@@ -80,6 +82,25 @@ class SimplifiedCalPalService:
             import traceback
             traceback.print_exc()
 
+    def run_personal_mirror(self):
+        """Mirror personal calendar events to work calendar with red color."""
+        try:
+            self.logger.info("=" * 60)
+            self.logger.info("Running Personal Mirror")
+            self.logger.info("=" * 60)
+
+            mirror = PersonalMirror()
+            stats = mirror.sync_personal_events()
+
+            self.logger.info(f"✅ Personal mirror complete: {stats['mirrors_created']} created")
+
+            self.schedules['personal_mirror']['last_run'] = datetime.now()
+
+        except Exception as e:
+            self.logger.error(f"❌ Personal mirror failed: {e}")
+            import traceback
+            traceback.print_exc()
+
     def run_ics_generator(self):
         """Generate wife calendar ICS file."""
         try:
@@ -110,6 +131,10 @@ class SimplifiedCalPalService:
         # Run 25Live sync if scheduled
         if self.should_run('25live_sync'):
             self.run_25live_sync()
+
+        # Run personal mirror if scheduled
+        if self.should_run('personal_mirror'):
+            self.run_personal_mirror()
 
         # Run ICS generator if scheduled
         if self.should_run('ics_generator'):
@@ -173,6 +198,7 @@ def main():
     print("=" * 60)
     print("Active components:")
     print("  ✅ 25Live Sync → tross@georgefox.edu (with colors)")
+    print("  ✅ Personal Mirror → travis.e.ross@gmail.com (Red)")
     print("  ✅ ICS Generator → wife calendar")
     print("")
     print("Disabled (during transition):")
