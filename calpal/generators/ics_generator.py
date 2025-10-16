@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Database-Aware Shared Calendar ICS Generator
+Simplified Shared Calendar ICS Generator
 
 Generates ICS file from database events with filtering rules:
-- Exclude events from Family calendar (source)
-- Include events from Work calendar
-- Include events from Personal calendar
-- Exclude events that have been deleted (deleted_at IS NOT NULL)
-- Include everything else with full details
+- Include all events from Work calendar (tross@georgefox.edu)
+- Include all events from Personal calendar (travis.e.ross@gmail.com)
+- Exclude events from Family calendar
+- Exclude deleted events (deleted_at IS NOT NULL)
+- Apply anonymization rules for student appointments
 
-This ensures the ICS file shows both work and personal events for scheduling.
+Architecture: Single work calendar with color-coded events.
 """
 
 import json
@@ -97,23 +97,17 @@ class DBWifeICSGenerator:
         summary = event_data.get('summary', 'Untitled')
         event_type = event_data.get('event_type', '')
         location = event_data.get('location', '')
-        source_calendar = event_data.get('source_calendar', '')
-
-        # Subcalendar IDs - load from config
-        appointments_calendar = os.getenv('APPOINTMENTS_CALENDAR_ID', '')
-        classes_calendar = os.getenv('CLASSES_CALENDAR_ID', '')
 
         # Rule 1: Anonymize appointments
-        # - Check if from Appointments subcalendar
-        # - Or if summary matches student meeting pattern
-        if (source_calendar == appointments_calendar or
+        # Check event type or summary patterns
+        if ('appointment' in event_type.lower() or
+            'booking' in event_type.lower() or
             'Meet with Travis Ross' in summary or
-            'appointment' in event_type.lower() or
             'appointment' in summary.lower()):
             return "Student appointment"
 
         # Rule 2: For classes, add location if present
-        if (source_calendar == classes_calendar or event_type == '25live_class') and location:
+        if event_type == '25live_class' and location:
             # Only add location if not already in summary
             if location not in summary:
                 return f"{summary} in {location}"
