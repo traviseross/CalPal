@@ -1,0 +1,545 @@
+================================================================================
+SUBCALENDAR TO WORK CALENDAR MIGRATION
+================================================================================
+🔴 LIVE MODE - Events will be migrated
+================================================================================
+
+
+================================================================================
+Migrating: Classes
+Color: 5
+================================================================================
+  Fetching events from Classes...
+    Found 70 events
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-15T12:00:00-07:00
+    Original ID: ubm4brgngil023fkuf3dc1qfqc
+    ✅ Created on work calendar: j5f8379ilds3ri5q8sohgc4os0
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-15T13:00:00-07:00
+    Original ID: b35o0d7rk8e3b2r349o1fp0cs0
+    ✅ Created on work calendar: n5q5qfmv2incqiv3bddq9443r0
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-10-15T15:00:00-07:00
+    Original ID: e3nmhbt3rh5arbvckjpbdf1lok
+    ✅ Created on work calendar: i3dof2g8hvmmetrnj0uqhkcm88
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-17T12:00:00-07:00
+    Original ID: dpj73eeruqkoep9g9go1ep9svs
+    ✅ Created on work calendar: sf5r667ah7dhr291vboos43r48
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-17T13:00:00-07:00
+    Original ID: gfha6j40ng4sonlib3m3l8hrng
+    ✅ Created on work calendar: 6q3m18k47k5teljsjutit963jc
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-20T12:00:00-07:00
+    Original ID: og4kr9h7o0k14d7j4mfc3e3e2c
+    ✅ Created on work calendar: 11a2f1ol2fh05ddr4hp1p8iqi4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-20T13:00:00-07:00
+    Original ID: 7rl4pqi3qglm871oge0megl5ao
+    ✅ Created on work calendar: dohafpti8dmjl22ug802p0ksd8
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-10-20T15:00:00-07:00
+    Original ID: 0f23v8qsmbh89q8n5fulbugrv4
+    ✅ Created on work calendar: akqkgbh5hq2odlqm69582l3km0
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-10-21T18:30:00-07:00
+    Original ID: a9odf4qoieed4nsdvgg0irnhp0
+    ✅ Created on work calendar: 6kote6riovk36lf9sarrrofbkc
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-22T12:00:00-07:00
+    Original ID: csbobk77tausrvf4p2j5k2t4c4
+    ✅ Created on work calendar: nmae62jjomg6aqc36dn681fai4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-22T13:00:00-07:00
+    Original ID: s6ropa86d7pgl7fnfgp0gcugtk
+    ✅ Created on work calendar: ckcptb5r3lmem5d3vpf6vpc9i4
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-10-22T15:00:00-07:00
+    Original ID: g0k6lu3k7d0325l4k41lobjb8c
+    ✅ Created on work calendar: pbmotnn4hqp294b75ssh4t751s
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-24T12:00:00-07:00
+    Original ID: js1a6ef2kjrcebv1t999diu7e0
+    ✅ Created on work calendar: u6j0tea7vr56us8v8kenqgmcb4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-24T13:00:00-07:00
+    Original ID: bda6tblkqc0ahir72earfi7v2o
+    ✅ Created on work calendar: bdojjri1i07qap69bn811ksm40
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-27T12:00:00-07:00
+    Original ID: r40q8v1qtd5t33kajehg1t4l88
+    ✅ Created on work calendar: pet5nlc7uk3k7e4q6hmt78thag
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-27T13:00:00-07:00
+    Original ID: a7dpv014icbgfv8mlscu40k3b4
+    ✅ Created on work calendar: 8he35a6tdh8usbfl4tokm2vbck
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-10-27T15:00:00-07:00
+    Original ID: ds4ravetrraufjcaprksq4rii0
+    ✅ Created on work calendar: 5sqiejj33ssu8qnm1plf097rdo
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-10-28T18:30:00-07:00
+    Original ID: vbd2v9avdtsqondcdc9nn58i50
+    ✅ Created on work calendar: 2pm3rnjrs38ucumja26jabh8og
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-29T12:00:00-07:00
+    Original ID: krcdnsaod97920kdasra4jvmk0
+    ✅ Created on work calendar: girmkdc5e154dmrju5ipbt35ds
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-29T13:00:00-07:00
+    Original ID: 4qn9ndi5f4bnhfsjh2imt3le1o
+    ✅ Created on work calendar: nkp5mrbq0urn34fl6o06u32okg
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-10-29T15:00:00-07:00
+    Original ID: u436i8je9ujf6voikvqqufpsrk
+    ✅ Created on work calendar: g2en32pp18oq20disb8on4f6bc
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-31T12:00:00-07:00
+    Original ID: nr3hr2cac2qqca037gdnso2bhc
+    ✅ Created on work calendar: 31f59b9vncmhfjhoqvqmakq10c
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-10-31T13:00:00-07:00
+    Original ID: 44an3uq1plrh672cj5q3tdecf0
+    ✅ Created on work calendar: sup8b26itor9aj9gupkamr5m20
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-03T12:00:00-08:00
+    Original ID: fa96kr3g79o289s92lqlvfe3a8
+    ✅ Created on work calendar: ofmu2eq39v6iq78lqcf8ce1uv4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-03T13:00:00-08:00
+    Original ID: hh1jobf3bud92co1f59h6ut60c
+    ✅ Created on work calendar: shlaphgj4vskvqucae1brb1udo
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-03T15:00:00-08:00
+    Original ID: b9up7vchv49b6h72hh2te5bmqc
+    ✅ Created on work calendar: 4svchpufrboq5qer6dln0gth5c
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-11-04T18:30:00-08:00
+    Original ID: jqdkn6e3isivubdec872ef9cv4
+    ✅ Created on work calendar: 4pir62f3aact48v2m6vd17mu7k
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-05T12:00:00-08:00
+    Original ID: 85jlnsre3co150tmqfstpej264
+    ✅ Created on work calendar: n8d3lg0q7a7m8gomqdc5qk9olo
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-05T13:00:00-08:00
+    Original ID: 1a5hi4aihr41at6q8sq7okfja4
+    ✅ Created on work calendar: 63231hamrpq94lg8pi2s338jk8
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-05T15:00:00-08:00
+    Original ID: ltqfrnlj2ds8df065cqrmsdgrg
+    ✅ Created on work calendar: rvmm3q9fkqv6u75fg5omd1rih4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-07T12:00:00-08:00
+    Original ID: i56ejctln19s2433lf8so4bpnk
+    ✅ Created on work calendar: v6tf5nhv3tttgrjvnd7o1tbve0
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-07T13:00:00-08:00
+    Original ID: h2vedghroeo4cl22uhhphbuhgo
+    ✅ Created on work calendar: 98s252ts8qoqa950top9nb532s
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-10T12:00:00-08:00
+    Original ID: sh13h5ebsdgak9na590sl9d280
+    ✅ Created on work calendar: qos3hg4d1r6ul5abfbbbcj5mvg
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-10T13:00:00-08:00
+    Original ID: bjen4t89sgau2gsmhipu3igajk
+    ✅ Created on work calendar: k97rvt48i4718i57sbjqmr7trc
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-10T15:00:00-08:00
+    Original ID: 2hrlphtl802rbijt8gjk4rdmhc
+    ✅ Created on work calendar: 57i59omc50gcg6hee0jomhed1o
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-11-11T18:30:00-08:00
+    Original ID: i8q14f97utuavogs9ghd8h0i1o
+    ✅ Created on work calendar: v4fhdbkj29aaof4mvvgq1t9mt4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-12T12:00:00-08:00
+    Original ID: rugim9istgaa5ui6k0pqgljum8
+    ✅ Created on work calendar: c6df3nibkomt07r0vua4uujgcs
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-12T13:00:00-08:00
+    Original ID: codo554pge97vqdba0beruvhpc
+    ✅ Created on work calendar: hlh1a7lf363b0sdkl022tasfac
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-12T15:00:00-08:00
+    Original ID: fchg56brs3rhtr11v68726rut0
+    ✅ Created on work calendar: qc7kq50f034lro89h9gh4rvcb0
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-14T12:00:00-08:00
+    Original ID: 0otp075fnnd4q8t7lgrlfioafc
+    ✅ Created on work calendar: tqq1ho5fu8v4i4b3q22rvgp9u4
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-14T13:00:00-08:00
+    Original ID: pa0l8uc6fkd0ct8j4ele9bd2h4
+    ✅ Created on work calendar: on7nva9mku2i4thou5ssc4m5s0
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-17T12:00:00-08:00
+    Original ID: 3ejtd8jrepqvhlurev5bemk37k
+    ✅ Created on work calendar: jdo5s28dpe04qotnotj61106s8
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-17T13:00:00-08:00
+    Original ID: qnbhdb0hqj0ucsnvonfevak2c4
+    ✅ Created on work calendar: 4hlr0q1g1ken8ajov2ikbrob6g
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-17T15:00:00-08:00
+    Original ID: qegkg79092h7nhtlbop9h5atgg
+    ✅ Created on work calendar: iup5sgas0il79quk8esb1lqlmg
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-11-18T18:30:00-08:00
+    Original ID: 2303ttsi3665bveb0v0higquo4
+    ✅ Created on work calendar: eunah6b8detaefr7tut1dafo1o
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-19T12:00:00-08:00
+    Original ID: 1cfge0noh8g1e3tjgrpgpaomoo
+    ✅ Created on work calendar: i1np3utfigrd5fbd4h82kuhj3o
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-19T13:00:00-08:00
+    Original ID: 9fs9mi1vlh9ibr00s5ap07dm8g
+    ✅ Created on work calendar: k8lnf1gbenbdt3j33ic24bkhb0
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-19T15:00:00-08:00
+    Original ID: 94621qqdck0eoo88pci9vp3fa4
+    ✅ Created on work calendar: m95nf44gveavli95njai9u1e90
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-21T12:00:00-08:00
+    Original ID: ahcgpa2qd70egv42v65lmbh5qc
+    ✅ Created on work calendar: rnh9p5ffnsits8ombghgth6cqg
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-21T13:00:00-08:00
+    Original ID: 81m7ed394i3d0m3d5r0mcan7ms
+    ✅ Created on work calendar: i1fjf4jka2i2955ecapf3ee90g
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-24T12:00:00-08:00
+    Original ID: 45pumnrqrgm745es0gda0ms7qc
+    ✅ Created on work calendar: j7npouei7bhqvajmcen072m488
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-24T13:00:00-08:00
+    Original ID: 4m8v38o9ctiatr7on7mokd3n3g
+    ✅ Created on work calendar: l7co9cka6srq5ub0ffnb4g150o
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-24T15:00:00-08:00
+    Original ID: tocn6ahufm2cihopa3t6od4uoc
+    ✅ Created on work calendar: oiudbkaebsebt8ecdbk5vfqk7k
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-11-25T18:30:00-08:00
+    Original ID: 27p41v5sn31gbtejv2gjis6fjo
+    ✅ Created on work calendar: kk5bf1fh7q840frpjo2gtc6v28
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-26T12:00:00-08:00
+    Original ID: e9nocuvb2ifcmbiq1ojfri8b2s
+    ✅ Created on work calendar: p0070nhuadv7sqce9v7u1o0u1g
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-11-26T13:00:00-08:00
+    Original ID: l91lvsoh51vqt1vfts7avk8adc
+    ✅ Created on work calendar: r9epuis4mis27q37jge4r59mk8
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-11-26T15:00:00-08:00
+    Original ID: sktaklccs164lrrkgni81flovg
+    ✅ Created on work calendar: hsf40n1k05h75q298gca8b2g84
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-01T12:00:00-08:00
+    Original ID: a6vusbhv9p0l097103pg6974vo
+    ✅ Created on work calendar: 1r7g6t8ue726vgu1t9tqmohsn0
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-01T13:00:00-08:00
+    Original ID: qg70ohiagt748dkkrh65njlau8
+    ✅ Created on work calendar: cafr88njgd5bbve4mnh49h9bks
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-12-01T15:00:00-08:00
+    Original ID: odmp8v0l8re1nnbm9gackiiipk
+    ✅ Created on work calendar: 7cb59ina3mdndnmqc14ej4keqk
+    ✅ Database updated
+
+  Migrating: College to Career
+    Start: 2025-12-02T18:30:00-08:00
+    Original ID: ggtrigevq8an16hqabvl56m0jc
+    ✅ Created on work calendar: h692ueepnirqq0aoci5nthn52o
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-03T12:00:00-08:00
+    Original ID: u5emqra9hj7lf39o088kfkkkik
+    ✅ Created on work calendar: 4tje3vbb77o9034ks6po5skchs
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-03T13:00:00-08:00
+    Original ID: fe4k8pc41vclcvggn47v5rh470
+    ✅ Created on work calendar: 5k6k8t83qu4f6ri9fk9j51vjtc
+    ✅ Database updated
+
+  Migrating: Deep Dives in History
+    Start: 2025-12-03T15:00:00-08:00
+    Original ID: 08o8tej9on00q6pt7nbvj5lrj8
+    ✅ Created on work calendar: 3o0li1i98r8l4regg6l258i01s
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-05T12:00:00-08:00
+    Original ID: 134t0tf4gk4mi85plj0l47mjj4
+    ✅ Created on work calendar: mnmhen0417sijenvuv4i7285dc
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2025-12-05T13:00:00-08:00
+    Original ID: cme358b1t7bbmjfr7e2q3bqrj8
+    ✅ Created on work calendar: q4nt497159lre3q02mjk32cij0
+    ✅ Database updated
+
+  Migrating: EXAM: The Modern & Postmodern World
+    Start: 2025-12-09T12:45:00-08:00
+    Original ID: 8lobn18184hp8fml6f4238h8s4
+    ✅ Created on work calendar: t9b0j6l84j94600n9n00elhdb4
+    ✅ Database updated
+
+  Migrating: EXAM: The Modern & Postmodern World
+    Start: 2025-12-10T12:45:00-08:00
+    Original ID: t64m9o7f03rr3p3tko4od1otb4
+    ✅ Created on work calendar: 7bpqmhju7jqnk8if3plfujtjsc
+    ✅ Database updated
+
+  Migrating: The Modern & Postmodern World
+    Start: 2026-01-12T13:00:00-08:00
+    Original ID: ob9ojljvmp4ahtabqqo83nm21g
+    ✅ Created on work calendar: uuh4rhrkrdb8bu78ffop3p96ck
+    ✅ Database updated
+
+  Migrating: The History of Right Now
+    Start: 2026-01-12T15:00:00-08:00
+    Original ID: a8hr4kbsob596u4fp2quaipk4c
+    ✅ Created on work calendar: o4pt70gao9j9s4eruc95b6qat8
+    ✅ Database updated
+
+================================================================================
+Migrating: GFU Events
+Color: 9
+================================================================================
+  Fetching events from GFU Events...
+    Found 15 events
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-10-17T10:00:00-07:00
+    Original ID: 2h9p3u4r75elr5v8mn3qtsj660
+    ✅ Created on work calendar: h7du2090ujssi96cancs4sbvms
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-10-24T10:00:00-07:00
+    Original ID: 99b8hogkv2bhf959o5c7e16i5k
+    ✅ Created on work calendar: 6tmr3v352usa0dk7qg2dn3foj4
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-10-31T10:00:00-07:00
+    Original ID: 9lhv751vd913vmg8cnk5q510qg
+    ✅ Created on work calendar: c8pp8ctsgv031ooelr6boaltng
+    ✅ Database updated
+
+  Migrating: Faculty Review
+    Start: 2025-11-04T11:00:00-08:00
+    Original ID: vnj1ada3mhilk2errgb25npkk8
+    ✅ Created on work calendar: hn13gpiv7u2u1o9crpgp367er0
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-11-07T10:00:00-08:00
+    Original ID: 8dvj1pk6q9tb30fjqc5vmkprno
+    ✅ Created on work calendar: vj9vcvrcpe8i0gbrue5fe01mr8
+    ✅ Database updated
+
+  Migrating: Faculty Lunch
+    Start: 2025-11-13T11:00:00-08:00
+    Original ID: 7f28rvpq1lj2jc0kpv5ouuv2uo
+    ✅ Created on work calendar: 5adk9vuidc0li9kh4l3d4a52t8
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-11-14T10:00:00-08:00
+    Original ID: 895oe872chtl88c8704o9a31hs
+    ✅ Created on work calendar: do1ij8gt7di24u0us1r1s7grmo
+    ✅ Database updated
+
+  Migrating: All Employee Lunch
+    Start: 2025-11-19T09:00:00-08:00
+    Original ID: shfnef4fnl322elhr5710g2vn4
+    ✅ Created on work calendar: u8m9d4ok6d7b66oct8t1264pk8
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-11-21T10:00:00-08:00
+    Original ID: a2eq0ovujsk5720ebg74uolrbg
+    ✅ Created on work calendar: gccbafs8cbst3dnarm4ksolmbo
+    ✅ Database updated
+
+  Migrating: Christmas Extravaganza
+    Start: 2025-12-04T16:30:00-08:00
+    Original ID: 11ha9h9c1bibuskc0i16fc5748
+    ✅ Created on work calendar: rsshhfiastfaltk9incve8tid8
+    ✅ Database updated
+
+  Migrating: Fridays@Fox History & Politics
+    Start: 2025-12-05T10:00:00-08:00
+    Original ID: 7qrenntpodjeatmik0h12ugqak
+    ✅ Created on work calendar: 3t4k0hrt46gj3e40j4ur4sgq5c
+    ✅ Database updated
+
+  Migrating: Midyear UG Commencement
+    Start: 2025-12-13T11:00:00-08:00
+    Original ID: bqisktso10r72sm4j6ssm62mic
+    ✅ Created on work calendar: e2rhgnd15vlgjmrioiavf29bg8
+    ✅ Database updated
+
+  Migrating: Midyear Graduate Commencement
+    Start: 2025-12-13T15:00:00-08:00
+    Original ID: gh6sdiqa3uteb3cpe0u9lviens
+    ✅ Created on work calendar: qovc1815uap8qgg01bf1jhdkvs
+    ✅ Database updated
+
+  Migrating: All Employee Lunch
+    Start: 2025-12-18T11:30:00-08:00
+    Original ID: rb149f9m01o56h70fse0arkkbo
+    ✅ Created on work calendar: jo1s2br03lruadvu28gn7vevas
+    ✅ Database updated
+
+  Migrating: Formation Working Group
+    Start: 2026-01-12T15:00:00-08:00
+    Original ID: isn1jp35j21i1dkv4pehs5bnm8
+    ✅ Created on work calendar: nrkh29bu84ugf0dve28gddg5sk
+    ✅ Database updated
+
+================================================================================
+MIGRATION SUMMARY
+================================================================================
+Events migrated: 85
+Errors: 0
+Skipped: 0
+
+✅ Migration complete!
+
+⚠️  IMPORTANT NEXT STEPS:
+  1. Verify events appear on tross@georgefox.edu with correct colors
+  2. Once verified, you can delete events from subcalendars
+  3. Update 25Live sync to write directly to work calendar
+
