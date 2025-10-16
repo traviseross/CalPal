@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 """
-Database-Only 25Live Sync Service (Phase 2: Single Writer Pattern)
+Simplified 25Live Sync Service - Direct to Work Calendar
 
-Syncs events from 25Live to DATABASE ONLY:
-- Classes: Travis's teaching schedule → Database (Classes calendar)
-- GFU Events: University events → Database (GFU Events calendar)
+Syncs events from 25Live directly to tross@georgefox.edu with color coding:
+- Classes: Yellow (color 5)
+- GFU Events: Blue (color 9)
 
-KEY CHANGE: No longer writes directly to Google Calendar!
-- All events are recorded in PostgreSQL database
-- unified_calendar_sync.py handles Google Calendar creation/deletion
-- This prevents race conditions and infinite re-creation bugs
+SIMPLIFIED ARCHITECTURE:
+- Writes directly to tross@georgefox.edu (no subcalendars)
+- Uses color coding for visual differentiation
+- Database tracks all events for ICS generation and history
+- No mirroring, no reconciliation, no orphans
 
 FIXES:
 - Checks BOTH 25live_reservation_id AND 25live_event_id for deletions
-- Prevents events from being recreated after manual deletion (418x bug fix)
+- Prevents events from being recreated after manual deletion
 
 Date Range: August 1, 2024 to 12 months forward from today
 """
@@ -105,16 +106,20 @@ class DBAware25LiveSync:
             raise
 
     def load_calendar_config(self):
-        """Load calendar configuration from work_subcalendars.json."""
-        try:
-            subcalendars_file = os.path.join(DATA_DIR, 'work_subcalendars.json')
-            with open(subcalendars_file, 'r') as f:
-                self.calendars = json.load(f)
-            self.logger.info("✅ Loaded calendar configuration")
-            self.logger.info(f"  Classes: {self.calendars.get('Classes')}")
-            self.logger.info(f"  GFU Events: {self.calendars.get('GFU Events')}")
-        except Exception as e:
-            self.logger.error(f"❌ Failed to load calendar config: {e}")
+        """Configure calendar and color settings."""
+        # All events go to work calendar with color coding
+        self.target_calendar = self.work_calendar
+
+        # Color mappings for event types
+        self.color_map = {
+            'Classes': '5',  # Banana (Yellow)
+            'GFU Events': '9'  # Blueberry (Blue)
+        }
+
+        self.logger.info("✅ Calendar configuration loaded")
+        self.logger.info(f"  Target calendar: {self.target_calendar}")
+        self.logger.info(f"  Classes color: {self.color_map['Classes']} (Yellow)")
+        self.logger.info(f"  GFU Events color: {self.color_map['GFU Events']} (Blue)")
 
     def load_event_blacklist(self):
         """Load event blacklist from event_blacklist.json."""
@@ -399,7 +404,7 @@ class DBAware25LiveSync:
             return str(profile_name)
         return None
 
-    def reservation_to_event_data(self, reservation: Any, calendar_type: str, calendar_id: str) -> Optional[Dict]:
+    def reservation_to_event_data(self, reservation: Any, calendar_type: str) -> Optional[Dict]:
         """Convert 25Live reservation to event data for database and Google Calendar."""
         # Handle case where reservation might be a string or invalid
         if not isinstance(reservation, dict):
@@ -456,18 +461,19 @@ class DBAware25LiveSync:
             'location': location,
             'start_time': start_time,
             'end_time': end_time,
-            'source_calendar': calendar_id,
-            'current_calendar': calendar_id,
+            'source_calendar': self.target_calendar,  # All events go to work calendar
+            'current_calendar': self.target_calendar,
             'event_type': event_type,
             'status': 'active',
             'is_attendee_event': False,
-            'organizer_email': None,  # Set by service account from credentials
-            'creator_email': None,  # Set by service account from credentials
+            'organizer_email': None,
+            'creator_email': None,
             'last_action': 'created',
             'metadata': {
                 '25live_reservation_id': reservation_id,
                 '25live_event_id': str(reservation.get('event_id', '')),
-                'calendar_type': calendar_type
+                'calendar_type': calendar_type,
+                'color_id': self.color_map.get(calendar_type, '1')  # Store color in metadata
             }
         }
 
@@ -512,7 +518,10 @@ class DBAware25LiveSync:
             return None
 
     def create_google_calendar_event(self, event_data: Dict) -> Optional[str]:
-        """Create event in Google Calendar and return the event_id."""
+        """Create event in Google Calendar with color and return the event_id."""
+        # Get color from metadata
+        color_id = event_data.get('metadata', {}).get('color_id', '1')
+
         calendar_event = {
             'summary': event_data['summary'],
             'description': event_data['description'],
@@ -525,9 +534,11 @@ class DBAware25LiveSync:
                 'dateTime': event_data['end_time'].isoformat(),
                 'timeZone': 'America/Los_Angeles'
             },
+            'colorId': color_id,  # Add color
             'extendedProperties': {
                 'private': {
                     'source': '25live',
+                    'event_type': event_data['event_type'],
                     'calendar_type': event_data['metadata']['calendar_type'],
                     'sync_time': datetime.now().isoformat()
                 }
@@ -543,7 +554,7 @@ class DBAware25LiveSync:
             event_id = created_event['id']
             ical_uid = created_event.get('iCalUID')
 
-            self.logger.debug(f"Created Google Calendar event: {event_data['summary']}")
+            self.logger.debug(f"Created event with color {color_id}: {event_data['summary']}")
 
             # Add small delay to avoid rate limiting
             time.sleep(0.1)
@@ -560,15 +571,12 @@ class DBAware25LiveSync:
 
     def sync_calendar_type(self, calendar_type: str) -> Dict[str, Any]:
         """Sync all events for a specific calendar type with database tracking."""
-        self.logger.info(f"🔄 Syncing {calendar_type} events...")
+        self.logger.info(f"🔄 Syncing {calendar_type} events to {self.target_calendar}...")
+        self.logger.info(f"   Using color: {self.color_map.get(calendar_type, '1')}")
 
         # Get configuration
         type_config = self.query_config.get(calendar_type, {})
         urls = type_config.get('URLs', [])
-        calendar_id = self.calendars.get(calendar_type)
-
-        if not calendar_id:
-            return {'success': False, 'error': f'No calendar ID for {calendar_type}'}
 
         if not urls:
             return {'success': False, 'error': f'No URLs configured for {calendar_type}'}
@@ -594,8 +602,8 @@ class DBAware25LiveSync:
 
                 for reservation in reservations:
                     try:
-                        # Convert to event data
-                        event_data = self.reservation_to_event_data(reservation, calendar_type, calendar_id)
+                        # Convert to event data (now goes to work calendar)
+                        event_data = self.reservation_to_event_data(reservation, calendar_type)
 
                         if not event_data:
                             stats['errors'] += 1
@@ -609,50 +617,52 @@ class DBAware25LiveSync:
                         # Check if event is blacklisted
                         if self.is_event_blacklisted(event_data.get('summary', '')):
                             self.logger.debug(f"Skipping blacklisted event: {event_data.get('summary')}")
-                            stats['duplicates_skipped'] += 1  # Use this stat for blacklisted events
+                            stats['duplicates_skipped'] += 1
                             continue
 
-                        # Check if event already exists in database (by 25Live reservation ID + calendar)
+                        # Check if event already exists in database (by 25Live reservation ID)
                         reservation_id = event_data['metadata'].get('25live_reservation_id')
                         event_id = event_data['metadata'].get('25live_event_id')
 
                         if reservation_id or event_id:
                             # Check database for existing ACTIVE event with this 25Live ID
                             if reservation_id:
-                                existing = self.db.get_event_by_25live_id(reservation_id, calendar_id)
+                                existing = self.db.get_event_by_25live_id(reservation_id, self.target_calendar)
                                 if existing:
                                     stats['duplicates_skipped'] += 1
                                     continue
 
-                            # CRITICAL: Check for DELETED events with this reservation_id OR event_id
-                            # If user manually deleted it, don't recreate it!
-                            # This fixes the infinite re-creation bug (e.g., CCC President's Meeting recreated 418 times)
-                            deleted_event = self.check_deleted_event(reservation_id, event_id, calendar_id)
+                            # Check for DELETED events - don't recreate them!
+                            deleted_event = self.check_deleted_event(reservation_id, event_id, self.target_calendar)
                             if deleted_event:
                                 self.logger.debug(f"Skipping previously deleted event: {event_data.get('summary')}")
                                 stats['duplicates_skipped'] += 1
                                 continue
                         else:
-                            # Fallback: Check by summary + start_time + calendar for events without reservation_id
+                            # Fallback: Check by summary + start_time + calendar
                             existing = self.db.get_event_by_time_and_summary(
                                 summary=event_data['summary'],
                                 start_time=event_data['start_time'],
-                                calendar_id=calendar_id
+                                calendar_id=self.target_calendar
                             )
                             if existing:
                                 stats['duplicates_skipped'] += 1
                                 self.logger.debug(f"Skipping duplicate (by time/summary): {event_data['summary']}")
                                 continue
 
-                        # DB-ONLY MODE: Record in database without creating on Google Calendar
-                        # The unified_calendar_sync service will create it on Google Calendar
-                        event_data['event_id'] = None  # Will be set by unified sync
-                        event_data['ical_uid'] = None  # Will be set by unified sync
-                        event_data['last_action'] = 'pending_creation'
+                        # SIMPLIFIED: Create directly on Google Calendar with color
+                        event_id, ical_uid = self.create_google_calendar_event(event_data)
 
-                        if self.db.record_event(event_data):
-                            stats['events_created'] += 1
-                            self.logger.debug(f"Recorded in DB (pending creation): {event_data['summary']}")
+                        if event_id:
+                            # Record in database with Google Calendar ID
+                            event_data['event_id'] = event_id
+                            event_data['ical_uid'] = ical_uid
+                            event_data['last_action'] = 'created'
+
+                            if self.db.record_event(event_data):
+                                stats['events_created'] += 1
+                            else:
+                                stats['errors'] += 1
                         else:
                             stats['errors'] += 1
 
