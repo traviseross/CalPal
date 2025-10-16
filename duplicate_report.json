@@ -1,0 +1,402 @@
+{
+  "Classes": [
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-10-15T15:00:00-07:00",
+      "work_event_id": "i3dof2g8hvmmetrnj0uqhkcm88",
+      "subcal_event_id": "e3nmhbt3rh5arbvckjpbdf1lok",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-17T12:00:00-07:00",
+      "work_event_id": "sf5r667ah7dhr291vboos43r48",
+      "subcal_event_id": "dpj73eeruqkoep9g9go1ep9svs",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-17T13:00:00-07:00",
+      "work_event_id": "v0lbm0r6p34k0gb81qgo0j2gtc",
+      "subcal_event_id": "gfha6j40ng4sonlib3m3l8hrng",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-20T12:00:00-07:00",
+      "work_event_id": "nup808173qdhgorau2mk29hvq8",
+      "subcal_event_id": "og4kr9h7o0k14d7j4mfc3e3e2c",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-20T13:00:00-07:00",
+      "work_event_id": "o1c0fjro6mgoml828m5m7oi5ao",
+      "subcal_event_id": "7rl4pqi3qglm871oge0megl5ao",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-10-20T15:00:00-07:00",
+      "work_event_id": "c0bd1nkf2hushhh5pahgo678qk",
+      "subcal_event_id": "0f23v8qsmbh89q8n5fulbugrv4",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "College to Career",
+      "start": "2025-10-21T18:30:00-07:00",
+      "work_event_id": "dqnofockdep0ral5ovdcrts58k",
+      "subcal_event_id": "a9odf4qoieed4nsdvgg0irnhp0",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-22T12:00:00-07:00",
+      "work_event_id": "nmae62jjomg6aqc36dn681fai4",
+      "subcal_event_id": "csbobk77tausrvf4p2j5k2t4c4",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-22T13:00:00-07:00",
+      "work_event_id": "motui8dovge2vjh0k27lehi9b4",
+      "subcal_event_id": "s6ropa86d7pgl7fnfgp0gcugtk",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-10-22T15:00:00-07:00",
+      "work_event_id": "pbmotnn4hqp294b75ssh4t751s",
+      "subcal_event_id": "g0k6lu3k7d0325l4k41lobjb8c",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-24T12:00:00-07:00",
+      "work_event_id": "u6j0tea7vr56us8v8kenqgmcb4",
+      "subcal_event_id": "js1a6ef2kjrcebv1t999diu7e0",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-24T13:00:00-07:00",
+      "work_event_id": "bdojjri1i07qap69bn811ksm40",
+      "subcal_event_id": "bda6tblkqc0ahir72earfi7v2o",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-27T12:00:00-07:00",
+      "work_event_id": "pvh37qo8vh1ogbll52ea3fdqb8",
+      "subcal_event_id": "r40q8v1qtd5t33kajehg1t4l88",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-27T13:00:00-07:00",
+      "work_event_id": "8he35a6tdh8usbfl4tokm2vbck",
+      "subcal_event_id": "a7dpv014icbgfv8mlscu40k3b4",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-10-27T15:00:00-07:00",
+      "work_event_id": "5sqiejj33ssu8qnm1plf097rdo",
+      "subcal_event_id": "ds4ravetrraufjcaprksq4rii0",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "College to Career",
+      "start": "2025-10-28T18:30:00-07:00",
+      "work_event_id": "dd8arhtqrpm72vs9f0jn1mi3q4",
+      "subcal_event_id": "vbd2v9avdtsqondcdc9nn58i50",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-29T12:00:00-07:00",
+      "work_event_id": "girmkdc5e154dmrju5ipbt35ds",
+      "subcal_event_id": "krcdnsaod97920kdasra4jvmk0",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-29T13:00:00-07:00",
+      "work_event_id": "nkp5mrbq0urn34fl6o06u32okg",
+      "subcal_event_id": "4qn9ndi5f4bnhfsjh2imt3le1o",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-10-29T15:00:00-07:00",
+      "work_event_id": "g2en32pp18oq20disb8on4f6bc",
+      "subcal_event_id": "u436i8je9ujf6voikvqqufpsrk",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-31T12:00:00-07:00",
+      "work_event_id": "ofino8dmmj4p7v23q96novg1qk",
+      "subcal_event_id": "nr3hr2cac2qqca037gdnso2bhc",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-10-31T13:00:00-07:00",
+      "work_event_id": "sup8b26itor9aj9gupkamr5m20",
+      "subcal_event_id": "44an3uq1plrh672cj5q3tdecf0",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-03T12:00:00-08:00",
+      "work_event_id": "ofmu2eq39v6iq78lqcf8ce1uv4",
+      "subcal_event_id": "fa96kr3g79o289s92lqlvfe3a8",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-03T13:00:00-08:00",
+      "work_event_id": "shlaphgj4vskvqucae1brb1udo",
+      "subcal_event_id": "hh1jobf3bud92co1f59h6ut60c",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-11-03T15:00:00-08:00",
+      "work_event_id": "7dai7rtifvt4i0knbvlmcmol2c",
+      "subcal_event_id": "b9up7vchv49b6h72hh2te5bmqc",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "College to Career",
+      "start": "2025-11-04T18:30:00-08:00",
+      "work_event_id": "b4n4eonq4ltbrhkci1rjopfkms",
+      "subcal_event_id": "jqdkn6e3isivubdec872ef9cv4",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-05T12:00:00-08:00",
+      "work_event_id": "n8d3lg0q7a7m8gomqdc5qk9olo",
+      "subcal_event_id": "85jlnsre3co150tmqfstpej264",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-05T13:00:00-08:00",
+      "work_event_id": "63231hamrpq94lg8pi2s338jk8",
+      "subcal_event_id": "1a5hi4aihr41at6q8sq7okfja4",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-11-05T15:00:00-08:00",
+      "work_event_id": "rvmm3q9fkqv6u75fg5omd1rih4",
+      "subcal_event_id": "ltqfrnlj2ds8df065cqrmsdgrg",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-07T12:00:00-08:00",
+      "work_event_id": "v6tf5nhv3tttgrjvnd7o1tbve0",
+      "subcal_event_id": "i56ejctln19s2433lf8so4bpnk",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-07T13:00:00-08:00",
+      "work_event_id": "98s252ts8qoqa950top9nb532s",
+      "subcal_event_id": "h2vedghroeo4cl22uhhphbuhgo",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-10T12:00:00-08:00",
+      "work_event_id": "qos3hg4d1r6ul5abfbbbcj5mvg",
+      "subcal_event_id": "sh13h5ebsdgak9na590sl9d280",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-10T13:00:00-08:00",
+      "work_event_id": "k97rvt48i4718i57sbjqmr7trc",
+      "subcal_event_id": "bjen4t89sgau2gsmhipu3igajk",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-11-10T15:00:00-08:00",
+      "work_event_id": "vfe0vtei9k6p7qjhep3lo7ga1g",
+      "subcal_event_id": "2hrlphtl802rbijt8gjk4rdmhc",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "College to Career",
+      "start": "2025-11-11T18:30:00-08:00",
+      "work_event_id": "v4fhdbkj29aaof4mvvgq1t9mt4",
+      "subcal_event_id": "i8q14f97utuavogs9ghd8h0i1o",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-12T12:00:00-08:00",
+      "work_event_id": "soa5i2d5mc351olrravr7e5uo8",
+      "subcal_event_id": "rugim9istgaa5ui6k0pqgljum8",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-12T13:00:00-08:00",
+      "work_event_id": "i8fii18m82343s8nh4gn2pase4",
+      "subcal_event_id": "codo554pge97vqdba0beruvhpc",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    },
+    {
+      "summary": "Deep Dives in History",
+      "start": "2025-11-12T15:00:00-08:00",
+      "work_event_id": "qc7kq50f034lro89h9gh4rvcb0",
+      "subcal_event_id": "fchg56brs3rhtr11v68726rut0",
+      "work_color": "5",
+      "location": "Ross Center ROS 140"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-14T12:00:00-08:00",
+      "work_event_id": "tqq1ho5fu8v4i4b3q22rvgp9u4",
+      "subcal_event_id": "0otp075fnnd4q8t7lgrlfioafc",
+      "work_color": "5",
+      "location": "Ross Center ROS 105"
+    },
+    {
+      "summary": "The Modern & Postmodern World",
+      "start": "2025-11-14T13:00:00-08:00",
+      "work_event_id": "on7nva9mku2i4thou5ssc4m5s0",
+      "subcal_event_id": "pa0l8uc6fkd0ct8j4ele9bd2h4",
+      "work_color": "5",
+      "location": "Duke Athletic Center DUK 205"
+    }
+  ],
+  "Meetings": [
+    {
+      "summary": "FH Summit (JRs Abroad)",
+      "start": "2025-10-23T15:30:00-07:00",
+      "work_event_id": "6reejsu76mboofhgroeph6ogre",
+      "subcal_event_id": "v147dvo1etbmpf9231014a3nn4",
+      "work_color": "default",
+      "location": ""
+    }
+  ],
+  "Appointments": [
+    {
+      "summary": "Meet with Travis Ross (Rachel DeRosa)",
+      "start": "2025-10-17T14:30:00-07:00",
+      "work_event_id": "7dh5ifs1r3i281o00lv18nu5ns",
+      "subcal_event_id": "r60q56csdfeomlscupqcb163io",
+      "work_color": "6",
+      "location": "Hoover 243"
+    },
+    {
+      "summary": "Richter: Atlas",
+      "start": "2025-10-23T13:00:00-07:00",
+      "work_event_id": "lk17n2be3gt2dlmt6hikiatl2o",
+      "subcal_event_id": "7nfpappc24brm7qo7k418df9pl",
+      "work_color": "default",
+      "location": "Lyrics Cafe, 808 E Hancock St, Newberg, OR 97132, USA"
+    }
+  ],
+  "GFU Events": [
+    {
+      "summary": "Fridays@Fox History & Politics",
+      "start": "2025-10-17T10:00:00-07:00",
+      "work_event_id": "h7du2090ujssi96cancs4sbvms",
+      "subcal_event_id": "2h9p3u4r75elr5v8mn3qtsj660",
+      "work_color": "9",
+      "location": "Hoover Academic Building HVR 250"
+    },
+    {
+      "summary": "Fridays@Fox History & Politics",
+      "start": "2025-10-24T10:00:00-07:00",
+      "work_event_id": "ojvs7vpiq5h61eh1tmbo4m36ug",
+      "subcal_event_id": "99b8hogkv2bhf959o5c7e16i5k",
+      "work_color": "9",
+      "location": "Hoover Academic Building HVR 250"
+    },
+    {
+      "summary": "Fridays@Fox History & Politics",
+      "start": "2025-10-31T10:00:00-07:00",
+      "work_event_id": "kmbkoo0c7pd24jsbiurej9hf1s",
+      "subcal_event_id": "9lhv751vd913vmg8cnk5q510qg",
+      "work_color": "9",
+      "location": "Hoover Academic Building HVR 250"
+    },
+    {
+      "summary": "Faculty Review",
+      "start": "2025-11-04T11:00:00-08:00",
+      "work_event_id": "hn13gpiv7u2u1o9crpgp367er0",
+      "subcal_event_id": "vnj1ada3mhilk2errgb25npkk8",
+      "work_color": "9",
+      "location": ""
+    },
+    {
+      "summary": "Fridays@Fox History & Politics",
+      "start": "2025-11-07T10:00:00-08:00",
+      "work_event_id": "vjnvqg9gopa7mdnv84d2o0h4d8",
+      "subcal_event_id": "8dvj1pk6q9tb30fjqc5vmkprno",
+      "work_color": "9",
+      "location": "Hoover Academic Building HVR 250"
+    },
+    {
+      "summary": "Faculty Lunch",
+      "start": "2025-11-13T11:00:00-08:00",
+      "work_event_id": "nbljjtur53luss0o1gosqs3urg",
+      "subcal_event_id": "7f28rvpq1lj2jc0kpv5ouuv2uo",
+      "work_color": "9",
+      "location": "CCD 101"
+    },
+    {
+      "summary": "Fridays@Fox History & Politics",
+      "start": "2025-11-14T10:00:00-08:00",
+      "work_event_id": "i77918bik8jns5spd767l676n0",
+      "subcal_event_id": "895oe872chtl88c8704o9a31hs",
+      "work_color": "9",
+      "location": "Hoover Academic Building HVR 250"
+    }
+  ]
+}
